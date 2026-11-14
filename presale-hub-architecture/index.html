@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Presale Hub: สถาปัตยกรรมระบบ</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --paper:#f5f5f5; --ink:#2d3142; --muted:#4f5d75; --soft:#5a6580; --accent:#bf4520; --accent-tint:rgba(191,69,32,0.08);
+  --link:#2e5aa8; --rule:rgba(45,49,66,0.12); --rule-solid:#bfc0c0; --zone:rgba(45,49,66,0.02);
+  --store:rgba(45,49,66,0.05); --ext:rgba(45,49,66,0.03); --ext-stroke:rgba(45,49,66,0.30); --input:rgba(79,93,117,0.10);
+  --sans:'Geist','IBM Plex Sans Thai',system-ui,sans-serif; --serif:'Instrument Serif','Noto Serif',serif;
+  --mono:'Geist Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+html { scroll-behavior: smooth; }
+body { font-family:var(--sans); background:var(--paper); color:var(--ink); line-height:1.6; padding:3rem 1.5rem 4rem; }
+main { max-width:1100px; margin:0 auto; }
+.eyebrow { font-family:var(--mono); font-size:.66rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:.5rem; }
+h1 { font-family:var(--serif); font-size:clamp(1.7rem,2.6vw + .8rem,2.4rem); font-weight:400; letter-spacing:-.02em; line-height:1.15; margin-bottom:.75rem; }
+.lede { max-width:46rem; color:var(--muted); margin-bottom:1.25rem; }
+nav.toc { display:flex; flex-wrap:wrap; gap:.4rem 1.25rem; margin-bottom:2.5rem; font-family:var(--mono); font-size:.74rem; }
+nav.toc a { color:var(--link); text-decoration:none; border-bottom:1px solid transparent; }
+nav.toc a:hover, nav.toc a:focus-visible { border-bottom-color:var(--link); outline:none; }
+section.fig { margin-top:3rem; scroll-margin-top:1rem; }
+h2 { font-size:1rem; font-weight:600; margin-bottom:.3rem; }
+.sub { color:var(--muted); font-size:.92rem; max-width:44rem; margin-bottom:1rem; }
+.scroll { width:100%; overflow-x:auto; border-top:1px solid var(--rule); padding-top:1rem; }
+svg { display:block; width:100%; min-width:var(--w); height:auto; }
+.nname { font-family:var(--sans); font-size:13px; font-weight:600; fill:var(--ink); }
+.nsub { font-family:var(--sans); font-size:12px; fill:var(--muted); }
+.alabel { font-family:var(--mono); font-size:8.5px; letter-spacing:.06em; fill:var(--soft); }
+.zlabel { font-family:var(--mono),var(--sans); font-size:10px; letter-spacing:.08em; fill:var(--soft); }
+.legend { display:flex; flex-wrap:wrap; gap:.5rem 1.5rem; font-size:.78rem; color:var(--muted); margin-top:.75rem; font-family:var(--mono); }
+.legend i { display:inline-block; width:22px; height:0; border-top:1.5px solid; vertical-align:middle; margin-right:.4rem; }
+code { font-family:var(--mono); font-size:.82em; color:var(--ink); }
+
+/* ---- nodes and edges: selectable, static by default */
+.node { cursor:pointer; outline:none; }
+.node .box { transition:stroke .2s var(--ease), stroke-width .2s var(--ease); }
+.node:hover .box { stroke:var(--link); }
+.node:focus-visible .box { stroke:var(--link); stroke-width:2.5; }
+.edge .line { transition:opacity .3s var(--ease); }
+.node, .edge { transition:opacity .3s var(--ease); }
+
+/* explorer: a selection dims the rest */
+[data-explorer][data-sel] .node:not(.is-on):not(.is-near), [data-explorer][data-sel] .edge:not(.is-on) { opacity:.28; }
+[data-explorer] .node.is-on .box { stroke:var(--accent); stroke-width:2.5; }
+[data-explorer] .edge.is-on .line { stroke:var(--accent); stroke-width:2; }
+
+/* stepper: past, active, future */
+[data-stepper].is-playing-state .edge.future, [data-stepper][data-step]:not([data-step="0"]) .edge.future { opacity:.18; }
+[data-stepper][data-step]:not([data-step="0"]) .node.future { opacity:.28; }
+[data-stepper] .node.is-active .box { stroke:var(--accent); stroke-width:2.5; }
+[data-stepper] .edge.is-active .line { stroke:var(--accent); stroke-width:2.2; stroke-dasharray:6 5; animation:march .9s linear infinite; }
+[data-stepper] .edge.is-active { opacity:1; }
+#overview .edge.is-on .line { marker-end:url(#d1-ar-accent); }
+#ask .edge.is-active .line { marker-end:url(#d2-ar-accent); }
+#index .edge.is-active .line { marker-end:url(#d3-ar-accent); }
+@keyframes march { to { stroke-dashoffset:-11; } }
+
+/* panels */
+.panel { margin-top:1rem; border-top:1px solid var(--rule-solid); padding-top:.9rem; }
+.chips { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:.9rem; }
+.chip, .btn { font-family:var(--sans); font-size:.82rem; color:var(--ink); background:#fff; border:1px solid var(--rule-solid); border-radius:6px; padding:.35rem .7rem; cursor:pointer; min-height:36px; }
+.chip:hover, .btn:hover:not(:disabled):not([aria-disabled="true"]) { border-color:var(--link); }
+.chip:focus-visible, .btn:focus-visible, .dot:focus-visible { outline:2px solid var(--link); outline-offset:2px; }
+.chip[aria-pressed="true"] { border-color:var(--accent); color:var(--accent); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity:.45; cursor:not-allowed; }
+.btn.primary { background:var(--ink); color:#fff; border-color:var(--ink); }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem 2rem; }
+.card h3 { font-size:.92rem; font-weight:600; margin-bottom:.2rem; }
+.card .lead { font-size:.9rem; color:var(--ink); margin-bottom:.35rem; }
+.card ul { padding-left:1.1rem; }
+.card li { font-size:.88rem; color:var(--muted); margin-bottom:.2rem; }
+.hint { display:none; font-size:.88rem; color:var(--muted); }
+.js .cards { display:block; max-width:44rem; }
+.js .panel[data-panel] { min-height:11.5rem; border-top:0; padding-top:0; margin:0 0 .75rem; }
+.js .card { display:none; }
+.js .card.is-shown { display:block; animation:rise .35s var(--ease); }
+.js .hint { display:block; }
+.js .hint.is-hidden { display:none; }
+@keyframes rise { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+.controls { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin:.25rem 0 1rem; }
+.dots { display:flex; gap:.35rem; margin-left:.5rem; }
+.dot { width:30px; height:30px; border-radius:50%; border:1px solid var(--rule-solid); background:#fff; font-family:var(--mono); font-size:.74rem; color:var(--muted); cursor:pointer; }
+.dot[aria-current="step"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+.dot.is-done { border-color:var(--accent); color:var(--accent); }
+.caption { min-height:7.5rem; max-width:46rem; }
+.caption .n { font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; color:var(--accent); text-transform:uppercase; }
+.caption h3 { font-size:1rem; font-weight:600; margin:.1rem 0 .3rem; }
+.caption p { font-size:.92rem; color:var(--muted); margin-bottom:.4rem; }
+.caption code { display:inline-block; background:rgba(45,49,66,.06); padding:.1rem .45rem; border-radius:4px; }
+.keys { font-family:var(--mono); font-size:.7rem; color:var(--soft); margin-top:.4rem; }
+.static-steps { display:none; padding-left:1.2rem; font-size:.9rem; color:var(--muted); max-width:46rem; }
+.static-steps li { margin-bottom:.5rem; }
+.static-steps strong { color:var(--ink); }
+.no-js .static-steps { display:block; }
+.no-js .controls, .no-js .caption, .no-js .chips, .no-js .keys { display:none; }
+
+.facts { margin-top:3.5rem; border-top:1px solid var(--rule-solid); padding-top:1rem; font-size:.88rem; color:var(--muted); max-width:46rem; }
+.facts dt { font-weight:600; color:var(--ink); margin-top:.7rem; }
+.sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+
+/* entrance: one quiet reveal on load, only when motion is allowed and JS is ready */
+.motion-ready main > section.fig { animation:rise .6s var(--ease) both; }
+.motion-ready main > section.fig:nth-of-type(2) { animation-delay:.08s; }
+.motion-ready main > section.fig:nth-of-type(3) { animation-delay:.16s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  .tok { display:none; }
+  [data-stepper] .edge.is-active .line { stroke-dasharray:none; }
+}
+@media print {
+  .controls, .chips, .tok, nav.toc, .keys { display:none !important; }
+  .scroll { overflow-x:visible; } svg { min-width:0; }
+  .js .card { display:block !important; }
+  [data-explorer][data-sel] .node, [data-explorer][data-sel] .edge, [data-stepper] .node, [data-stepper] .edge { opacity:1 !important; }
+}
+</style>
+</head>
+<body class="no-js">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="lg-supabase" viewBox="0 0 24 24"><path fill="#3FCF8E" d="M11.9 1.036c-.015-.986-1.26-1.41-1.874-.637L.764 12.05C-.33 13.427.65 15.455 2.409 15.455h9.579l.113 7.51c.014.985 1.259 1.408 1.873.636l9.262-11.653c1.093-1.375.113-3.403-1.645-3.403h-9.642z"/></symbol>
+<symbol id="lg-discord" viewBox="0 0 24 24"><path fill="#5865F2" d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></symbol>
+<symbol id="lg-googledrive" viewBox="0 0 24 24"><path fill="#4285F4" d="M12.01 1.485c-2.082 0-3.754.02-3.743.047.01.02 1.708 3.001 3.774 6.62l3.76 6.574h3.76c2.081 0 3.753-.02 3.742-.047-.005-.02-1.708-3.001-3.775-6.62l-3.76-6.574zm-4.76 1.73a789.828 789.861 0 0 0-3.63 6.319L0 15.868l1.89 3.298 1.885 3.297 3.62-6.335 3.618-6.33-1.88-3.287C8.1 4.704 7.255 3.22 7.25 3.214zm2.259 12.653-.203.348c-.114.198-.96 1.672-1.88 3.287a423.93 423.948 0 0 1-1.698 2.97c-.01.026 3.24.042 7.222.042h7.244l1.796-3.157c.992-1.734 1.85-3.23 1.906-3.323l.104-.167h-7.249z"/></symbol>
+<symbol id="lg-obsidian" viewBox="0 0 24 24"><path fill="#7C3AED" d="M19.355 18.538a68.967 68.959 0 0 0 1.858-2.954.81.81 0 0 0-.062-.9c-.516-.685-1.504-2.075-2.042-3.362-.553-1.321-.636-3.375-.64-4.377a1.707 1.707 0 0 0-.358-1.05l-3.198-4.064a3.744 3.744 0 0 1-.076.543c-.106.503-.307 1.004-.536 1.5-.134.29-.29.6-.446.914l-.31.626c-.516 1.068-.997 2.227-1.132 3.59-.124 1.26.046 2.73.815 4.481.128.011.257.025.386.044a6.363 6.363 0 0 1 3.326 1.505c.916.79 1.744 1.922 2.415 3.5zM8.199 22.569c.073.012.146.02.22.02.78.024 2.095.092 3.16.29.87.16 2.593.64 4.01 1.055 1.083.316 2.198-.548 2.355-1.664.114-.814.33-1.735.725-2.58l-.01.005c-.67-1.87-1.522-3.078-2.416-3.849a5.295 5.295 0 0 0-2.778-1.257c-1.54-.216-2.952.19-3.84.45.532 2.218.368 4.829-1.425 7.531zM5.533 9.938c-.023.1-.056.197-.098.29L2.82 16.059a1.602 1.602 0 0 0 .313 1.772l4.116 4.24c2.103-3.101 1.796-6.02.836-8.3-.728-1.73-1.832-3.081-2.55-3.831zM9.32 14.01c.615-.183 1.606-.465 2.745-.534-.683-1.725-.848-3.233-.716-4.577.154-1.552.7-2.847 1.235-3.95.113-.235.223-.454.328-.664.149-.297.288-.577.419-.86.217-.47.379-.885.46-1.27.08-.38.08-.72-.014-1.043-.095-.325-.297-.675-.68-1.06a1.6 1.6 0 0 0-1.475.36l-4.95 4.452a1.602 1.602 0 0 0-.513.952l-.427 2.83c.672.59 2.328 2.316 3.335 4.711.09.21.175.43.253.653z"/></symbol>
+<symbol id="lg-postgresql" viewBox="0 0 24 24"><path fill="#4169E1" d="M23.5594 14.7228a.5269.5269 0 0 0-.0563-.1191c-.139-.2632-.4768-.3418-1.0074-.2321-1.6533.3411-2.2935.1312-2.5256-.0191 1.342-2.0482 2.445-4.522 3.0411-6.8297.2714-1.0507.7982-3.5237.1222-4.7316a1.5641 1.5641 0 0 0-.1509-.235C21.6931.9086 19.8007.0248 17.5099.0005c-1.4947-.0158-2.7705.3461-3.1161.4794a9.449 9.449 0 0 0-.5159-.0816 8.044 8.044 0 0 0-1.3114-.1278c-1.1822-.0184-2.2038.2642-3.0498.8406-.8573-.3211-4.7888-1.645-7.2219.0788C.9359 2.1526.3086 3.8733.4302 6.3043c.0409.818.5069 3.334 1.2423 5.7436.4598 1.5065.9387 2.7019 1.4334 3.582.553.9942 1.1259 1.5933 1.7143 1.7895.4474.1491 1.1327.1441 1.8581-.7279.8012-.9635 1.5903-1.8258 1.9446-2.2069.4351.2355.9064.3625 1.39.3772a.0569.0569 0 0 0 .0004.0041 11.0312 11.0312 0 0 0-.2472.3054c-.3389.4302-.4094.5197-1.5002.7443-.3102.064-1.1344.2339-1.1464.8115-.0025.1224.0329.2309.0919.3268.2269.4231.9216.6097 1.015.6331 1.3345.3335 2.5044.092 3.3714-.6787-.017 2.231.0775 4.4174.3454 5.0874.2212.5529.7618 1.9045 2.4692 1.9043.2505 0 .5263-.0291.8296-.0941 1.7819-.3821 2.5557-1.1696 2.855-2.9059.1503-.8707.4016-2.8753.5388-4.1012.0169-.0703.0357-.1207.057-.1362.0007-.0005.0697-.0471.4272.0307a.3673.3673 0 0 0 .0443.0068l.2539.0223.0149.001c.8468.0384 1.9114-.1426 2.5312-.4308.6438-.2988 1.8057-1.0323 1.5951-1.6698zM2.371 11.8765c-.7435-2.4358-1.1779-4.8851-1.2123-5.5719-.1086-2.1714.4171-3.6829 1.5623-4.4927 1.8367-1.2986 4.8398-.5408 6.108-.13-.0032.0032-.0066.0061-.0098.0094-2.0238 2.044-1.9758 5.536-1.9708 5.7495-.0002.0823.0066.1989.0162.3593.0348.5873.0996 1.6804-.0735 2.9184-.1609 1.1504.1937 2.2764.9728 3.0892.0806.0841.1648.1631.2518.2374-.3468.3714-1.1004 1.1926-1.9025 2.1576-.5677.6825-.9597.5517-1.0886.5087-.3919-.1307-.813-.5871-1.2381-1.3223-.4796-.839-.9635-2.0317-1.4155-3.5126zm6.0072 5.0871c-.1711-.0428-.3271-.1132-.4322-.1772.0889-.0394.2374-.0902.4833-.1409 1.2833-.2641 1.4815-.4506 1.9143-1.0002.0992-.126.2116-.2687.3673-.4426a.3549.3549 0 0 0 .0737-.1298c.1708-.1513.2724-.1099.4369-.0417.156.0646.3078.26.3695.4752.0291.1016.0619.2945-.0452.4444-.9043 1.2658-2.2216 1.2494-3.1676 1.0128zm2.094-3.988-.0525.141c-.133.3566-.2567.6881-.3334 1.003-.6674-.0021-1.3168-.2872-1.8105-.8024-.6279-.6551-.9131-1.5664-.7825-2.5004.1828-1.3079.1153-2.4468.079-3.0586-.005-.0857-.0095-.1607-.0122-.2199.2957-.2621 1.6659-.9962 2.6429-.7724.4459.1022.7176.4057.8305.928.5846 2.7038.0774 3.8307-.3302 4.7363-.084.1866-.1633.3629-.2311.5454zm7.3637 4.5725c-.0169.1768-.0358.376-.0618.5959l-.146.4383a.3547.3547 0 0 0-.0182.1077c-.0059.4747-.054.6489-.115.8693-.0634.2292-.1353.4891-.1794 1.0575-.11 1.4143-.8782 2.2267-2.4172 2.5565-1.5155.3251-1.7843-.4968-2.0212-1.2217a6.5824 6.5824 0 0 0-.0769-.2266c-.2154-.5858-.1911-1.4119-.1574-2.5551.0165-.5612-.0249-1.9013-.3302-2.6462.0044-.2932.0106-.5909.019-.8918a.3529.3529 0 0 0-.0153-.1126 1.4927 1.4927 0 0 0-.0439-.208c-.1226-.4283-.4213-.7866-.7797-.9351-.1424-.059-.4038-.1672-.7178-.0869.067-.276.1831-.5875.309-.9249l.0529-.142c.0595-.16.134-.3257.213-.5012.4265-.9476 1.0106-2.2453.3766-5.1772-.2374-1.0981-1.0304-1.6343-2.2324-1.5098-.7207.0746-1.3799.3654-1.7088.5321a5.6716 5.6716 0 0 0-.1958.1041c.0918-1.1064.4386-3.1741 1.7357-4.4823a4.0306 4.0306 0 0 1 .3033-.276.3532.3532 0 0 0 .1447-.0644c.7524-.5706 1.6945-.8506 2.802-.8325.4091.0067.8017.0339 1.1742.081 1.939.3544 3.2439 1.4468 4.0359 2.3827.8143.9623 1.2552 1.9315 1.4312 2.4543-1.3232-.1346-2.2234.1268-2.6797.779-.9926 1.4189.543 4.1729 1.2811 5.4964.1353.2426.2522.4522.2889.5413.2403.5825.5515.9713.7787 1.2552.0696.087.1372.1714.1885.245-.4008.1155-1.1208.3825-1.0552 1.717-.0123.1563-.0423.4469-.0834.8148-.0461.2077-.0702.4603-.0994.7662zm.8905-1.6211c-.0405-.8316.2691-.9185.5967-1.0105a2.8566 2.8566 0 0 0 .135-.0406 1.202 1.202 0 0 0 .1342.103c.5703.3765 1.5823.4213 3.0068.1344-.2016.1769-.5189.3994-.9533.6011-.4098.1903-1.0957.333-1.7473.3636-.7197.0336-1.0859-.0807-1.1721-.151zm.5695-9.2712c-.0059.3508-.0542.6692-.1054 1.0017-.055.3576-.112.7274-.1264 1.1762-.0142.4368.0404.8909.0932 1.3301.1066.887.216 1.8003-.2075 2.7014a3.5272 3.5272 0 0 1-.1876-.3856c-.0527-.1276-.1669-.3326-.3251-.6162-.6156-1.1041-2.0574-3.6896-1.3193-4.7446.3795-.5427 1.3408-.5661 2.1781-.463zm.2284 7.0137a12.3762 12.3762 0 0 0-.0853-.1074l-.0355-.0444c.7262-1.1995.5842-2.3862.4578-3.4385-.0519-.4318-.1009-.8396-.0885-1.2226.0129-.4061.0666-.7543.1185-1.0911.0639-.415.1288-.8443.1109-1.3505.0134-.0531.0188-.1158.0118-.1902-.0457-.4855-.5999-1.938-1.7294-3.253-.6076-.7073-1.4896-1.4972-2.6889-2.0395.5251-.1066 1.2328-.2035 2.0244-.1859 2.0515.0456 3.6746.8135 4.8242 2.2824a.908.908 0 0 1 .0667.1002c.7231 1.3556-.2762 6.2751-2.9867 10.5405zm-8.8166-6.1162c-.025.1794-.3089.4225-.6211.4225a.5821.5821 0 0 1-.0809-.0056c-.1873-.026-.3765-.144-.5059-.3156-.0458-.0605-.1203-.178-.1055-.2844.0055-.0401.0261-.0985.0925-.1488.1182-.0894.3518-.1226.6096-.0867.3163.0441.6426.1938.6113.4186zm7.9305-.4114c.0111.0792-.049.201-.1531.3102-.0683.0717-.212.1961-.4079.2232a.5456.5456 0 0 1-.075.0052c-.2935 0-.5414-.2344-.5607-.3717-.024-.1765.2641-.3106.5611-.352.297-.0414.6111.0088.6356.1851z"/></symbol>
+<symbol id="lg-python" viewBox="0 0 24 24"><path fill="#3776AB" d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></symbol>
+<symbol id="lg-deno" viewBox="0 0 24 24"><path fill="#000000" d="M1.105 18.02A11.9 11.9 0 0 1 0 12.985q0-.698.078-1.376a12 12 0 0 1 .231-1.34A12 12 0 0 1 4.025 4.02a12 12 0 0 1 5.46-2.771 12 12 0 0 1 3.428-.23c1.452.112 2.825.477 4.077 1.05a12 12 0 0 1 2.78 1.774 12.02 12.02 0 0 1 4.053 7.078A12 12 0 0 1 24 12.985q0 .454-.036.914a12 12 0 0 1-.728 3.305 12 12 0 0 1-2.38 3.875c-1.33 1.357-3.02 1.962-4.43 1.936a4.4 4.4 0 0 1-2.724-1.024c-.99-.853-1.391-1.83-1.53-2.919a5 5 0 0 1 .128-1.518c.105-.38.37-1.116.76-1.437-.455-.197-1.04-.624-1.226-.829-.045-.05-.04-.13 0-.183a.155.155 0 0 1 .177-.053c.392.134.869.267 1.372.35.66.111 1.484.25 2.317.292 2.03.1 4.153-.813 4.812-2.627s.403-3.609-1.96-4.685-3.454-2.356-5.363-3.128c-1.247-.505-2.636-.205-4.06.582-3.838 2.121-7.277 8.822-5.69 15.032a.191.191 0 0 1-.315.19 12 12 0 0 1-1.25-1.634 12 12 0 0 1-.769-1.404M11.57 6.087c.649-.051 1.214.501 1.31 1.236.13.979-.228 1.99-1.41 2.013-1.01.02-1.315-.997-1.248-1.614.066-.616.574-1.575 1.35-1.635"/></symbol>
+<symbol id="lg-onnx" viewBox="0 0 24 24"><path fill="#005CED" d="M23.0325 11.2963c-.0503 0-.1006 0-.1508.0126l-4.021-7.4387c.0754-.1383.1131-.289.1131-.4524 0-.5403-.4398-.9675-.9675-.9675-.2765 0-.5278.113-.7037.3015L9.286 1.156C9.2357.6785 8.821.3016 8.3184.3016c-.5277 0-.9675.4398-.9675.9675 0 .1634.0377.3141.113.4524l-6.245 8.9591c-.0753-.0251-.1633-.0377-.2513-.0377-.5403 0-.9675.4398-.9675.9676 0 .5403.4398.9675.9675.9675h.0377l3.3676 8.3309c-.0503.1257-.088.2639-.088.402 0 .5404.4398.9676.9676.9676.2764 0 .5277-.113.7036-.3015l10.1152.9926c.1005.4273.49.7288.9424.7288.5403 0 .9676-.4398.9676-.9675 0-.2388-.088-.465-.2262-.6283l5.1141-8.8712c.0503.0126.1005.0126.1634.0126.5403 0 .9675-.4398.9675-.9676 0-.5403-.4272-.98-.9675-.98zM17.2272 4.021c.1131.1508.2765.264.4524.3267l-1.533 11.5728c-.1005.0252-.1885.0503-.2764.1005L7.4513 8.708c.0251-.0754.0377-.1634.0377-.2514 0-.0628-.0126-.1256-.0126-.1884zm4.8754 8.5068l-5.177 3.556a1.105 1.105 0 0 0-.1256-.0753L18.3455 4.335h.0126l3.9456 7.288c-.1508.1759-.2388.3895-.2388.6408 0 .1005.0126.1885.0377.2638zM6.3832 7.5016c-.4649.0754-.8293.4775-.8293.955v.0628l-3.4555 2.0481 5.378-7.7026zm.3519 1.91c.1256-.0252.2513-.088.3518-.1634l8.356 7.2628c-.0377.113-.0628.2262-.0628.3518v.0503l-9.311 3.845c-.1382-.201-.3518-.3518-.6031-.402zm8.8963 8.1172c.1257.1382.3016.2513.5026.289l.465 4.046c-.201.1006-.3519.264-.4524.4524l-9.8136-.955zm1.1435.2136c.3267-.1633.5403-.49.5403-.867 0-.088-.0126-.1634-.0377-.2513l4.7372-3.2545-4.8 8.331zm.2513-14.3497l-9.889 4.31-.1131-.0755 1.2565-5.3906h.0377c.3393 0 .6409-.1759.8168-.4397l7.891 1.5706zM1.935 11.6105c0-.0629-.0126-.1257-.0126-.1885l3.9079-2.2995c.0754.0754.1633.1508.2638.201L4.8252 20.243l-3.2043-7.9036c.1885-.176.3142-.4398.3142-.7288Z"/></symbol>
+<symbol id="lg-huggingface" viewBox="0 0 24 24"><path fill="#FFD21E" d="M12.025 1.13c-5.77 0-10.449 4.647-10.449 10.378 0 1.112.178 2.181.503 3.185.064-.222.203-.444.416-.577a.96.96 0 0 1 .524-.15c.293 0 .584.124.84.284.278.173.48.408.71.694.226.282.458.611.684.951v-.014c.017-.324.106-.622.264-.874s.403-.487.762-.543c.3-.047.596.06.787.203s.31.313.4.467c.15.257.212.468.233.542.01.026.653 1.552 1.657 2.54.616.605 1.01 1.223 1.082 1.912.055.537-.096 1.059-.38 1.572.637.121 1.294.187 1.967.187.657 0 1.298-.063 1.921-.178-.287-.517-.44-1.041-.384-1.581.07-.69.465-1.307 1.081-1.913 1.004-.987 1.647-2.513 1.657-2.539.021-.074.083-.285.233-.542.09-.154.208-.323.4-.467a1.08 1.08 0 0 1 .787-.203c.359.056.604.29.762.543s.247.55.265.874v.015c.225-.34.457-.67.683-.952.23-.286.432-.52.71-.694.257-.16.547-.284.84-.285a.97.97 0 0 1 .524.151c.228.143.373.388.43.625l.006.04a10.3 10.3 0 0 0 .534-3.273c0-5.731-4.678-10.378-10.449-10.378M8.327 6.583a1.5 1.5 0 0 1 .713.174 1.487 1.487 0 0 1 .617 2.013c-.183.343-.762-.214-1.102-.094-.38.134-.532.914-.917.71a1.487 1.487 0 0 1 .69-2.803m7.486 0a1.487 1.487 0 0 1 .689 2.803c-.385.204-.536-.576-.916-.71-.34-.12-.92.437-1.103.094a1.487 1.487 0 0 1 .617-2.013 1.5 1.5 0 0 1 .713-.174m-10.68 1.55a.96.96 0 1 1 0 1.921.96.96 0 0 1 0-1.92m13.838 0a.96.96 0 1 1 0 1.92.96.96 0 0 1 0-1.92M8.489 11.458c.588.01 1.965 1.157 3.572 1.164 1.607-.007 2.984-1.155 3.572-1.164.196-.003.305.12.305.454 0 .886-.424 2.328-1.563 3.202-.22-.756-1.396-1.366-1.63-1.32q-.011.001-.02.006l-.044.026-.01.008-.03.024q-.018.017-.035.036l-.032.04a1 1 0 0 0-.058.09l-.014.025q-.049.088-.11.19a1 1 0 0 1-.083.116 1.2 1.2 0 0 1-.173.18q-.035.029-.075.058a1.3 1.3 0 0 1-.251-.243 1 1 0 0 1-.076-.107c-.124-.193-.177-.363-.337-.444-.034-.016-.104-.008-.2.022q-.094.03-.216.087-.06.028-.125.063l-.13.074q-.067.04-.136.086a3 3 0 0 0-.135.096 3 3 0 0 0-.26.219 2 2 0 0 0-.12.121 2 2 0 0 0-.106.128l-.002.002a2 2 0 0 0-.09.132l-.001.001a1.2 1.2 0 0 0-.105.212q-.013.036-.024.073c-1.139-.875-1.563-2.317-1.563-3.203 0-.334.109-.457.305-.454m.836 10.354c.824-1.19.766-2.082-.365-3.194-1.13-1.112-1.789-2.738-1.789-2.738s-.246-.945-.806-.858-.97 1.499.202 2.362c1.173.864-.233 1.45-.685.64-.45-.812-1.683-2.896-2.322-3.295s-1.089-.175-.938.647 2.822 2.813 2.562 3.244-1.176-.506-1.176-.506-2.866-2.567-3.49-1.898.473 1.23 2.037 2.16c1.564.932 1.686 1.178 1.464 1.53s-3.675-2.511-4-1.297c-.323 1.214 3.524 1.567 3.287 2.405-.238.839-2.71-1.587-3.216-.642-.506.946 3.49 2.056 3.522 2.064 1.29.33 4.568 1.028 5.713-.624m5.349 0c-.824-1.19-.766-2.082.365-3.194 1.13-1.112 1.789-2.738 1.789-2.738s.246-.945.806-.858.97 1.499-.202 2.362c-1.173.864.233 1.45.685.64.451-.812 1.683-2.896 2.322-3.295s1.089-.175.938.647-2.822 2.813-2.562 3.244 1.176-.506 1.176-.506 2.866-2.567 3.49-1.898-.473 1.23-2.037 2.16c-1.564.932-1.686 1.178-1.464 1.53s3.675-2.511 4-1.297c.323 1.214-3.524 1.567-3.287 2.405.238.839 2.71-1.587 3.216-.642.506.946-3.49 2.056-3.522 2.064-1.29.33-4.568 1.028-5.713-.624"/></symbol>
+<symbol id="lg-typescript" viewBox="0 0 24 24"><path fill="#3178C6" d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/></symbol>
+<symbol id="lg-sqlite" viewBox="0 0 24 24"><path fill="#003B57" d="M21.678.521c-1.032-.92-2.28-.55-3.513.544a8.71 8.71 0 0 0-.547.535c-2.109 2.237-4.066 6.38-4.674 9.544.237.48.422 1.093.544 1.561a13.044 13.044 0 0 1 .164.703s-.019-.071-.096-.296l-.05-.146a1.689 1.689 0 0 0-.033-.08c-.138-.32-.518-.995-.686-1.289-.143.423-.27.818-.376 1.176.484.884.778 2.4.778 2.4s-.025-.099-.147-.442c-.107-.303-.644-1.244-.772-1.464-.217.804-.304 1.346-.226 1.478.152.256.296.698.422 1.186.286 1.1.485 2.44.485 2.44l.017.224a22.41 22.41 0 0 0 .056 2.748c.095 1.146.273 2.13.5 2.657l.155-.084c-.334-1.038-.47-2.399-.41-3.967.09-2.398.642-5.29 1.661-8.304 1.723-4.55 4.113-8.201 6.3-9.945-1.993 1.8-4.692 7.63-5.5 9.788-.904 2.416-1.545 4.684-1.931 6.857.666-2.037 2.821-2.912 2.821-2.912s1.057-1.304 2.292-3.166c-.74.169-1.955.458-2.362.629-.6.251-.762.337-.762.337s1.945-1.184 3.613-1.72C21.695 7.9 24.195 2.767 21.678.521m-18.573.543A1.842 1.842 0 0 0 1.27 2.9v16.608a1.84 1.84 0 0 0 1.835 1.834h9.418a22.953 22.953 0 0 1-.052-2.707c-.006-.062-.011-.141-.016-.2a27.01 27.01 0 0 0-.473-2.378c-.121-.47-.275-.898-.369-1.057-.116-.197-.098-.31-.097-.432 0-.12.015-.245.037-.386a9.98 9.98 0 0 1 .234-1.045l.217-.028c-.017-.035-.014-.065-.031-.097l-.041-.381a32.8 32.8 0 0 1 .382-1.194l.2-.019c-.008-.016-.01-.038-.018-.053l-.043-.316c.63-3.28 2.587-7.443 4.8-9.791.066-.069.133-.128.198-.194Z"/></symbol>
+<symbol id="lg-claude" viewBox="0 0 24 24"><path fill="#D97757" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></symbol></defs></svg>
+<main>
+<p class="eyebrow">Presale Hub · สถาปัตยกรรมระบบ</p>
+<h1>ถามเรื่องเอกสาร presale ใน Discord แล้วได้คำตอบพร้อมไฟล์อ้างอิง</h1>
+<p class="lede">Hub เก็บคิวงานและ index ไว้บน Supabase ส่วนการอ่านไฟล์และเรียก Claude ทำบน Mini PC เครื่องเดียว ไฟล์ต้นฉบับอยู่บน Google Drive และไม่ถูกอัปโหลดไปเก็บที่อื่น ส่งขึ้น hub เฉพาะ card สรุป ข้อความที่ค้นได้ และ vector</p>
+<nav class="toc" aria-label="หัวข้อ"><a href="#overview">ภาพรวม</a><a href="#ask">เส้นทางของคำถาม</a><a href="#index">จากไฟล์เป็น vector</a><a href="#facts">ข้อควรรู้</a></nav>
+
+<section class="fig" id="overview" data-explorer>
+<h2>ภาพรวม: ใครอยู่ตรงไหน</h2>
+<p class="sub">คลิกกล่องหรือกดปุ่มด้านล่างเพื่อดูว่าส่วนนั้นทำอะไร เส้นที่เกี่ยวข้องจะเด่นขึ้น จุดส้มที่วิ่งช้าๆ คือคำขอหนึ่งรอบ</p>
+<div class="chips" role="group" aria-label="เลือกส่วนประกอบ"><button type="button" class="chip" data-chip="peach" aria-pressed="false">Peach</button><button type="button" class="chip" data-chip="bot" aria-pressed="false">Discord bot</button><button type="button" class="chip" data-chip="edge" aria-pressed="false">Edge Function</button><button type="button" class="chip" data-chip="pg" aria-pressed="false">Postgres</button><button type="button" class="chip" data-chip="worker" aria-pressed="false">presale-worker</button><button type="button" class="chip" data-chip="claude" aria-pressed="false">Claude Code CLI</button><button type="button" class="chip" data-chip="drive" aria-pressed="false">Google Drive</button><button type="button" class="chip" data-chip="vault" aria-pressed="false">Obsidian vault</button></div>
+<div class="panel" data-panel><p class="hint" data-hint>เลือกกล่องในภาพเพื่อดูรายละเอียด กด Esc เพื่อล้างการเลือก</p><div class="cards"><article class="card" data-for="peach"><h3>Peach · ผู้ใช้</h3><p class="lead">สั่งงานด้วย slash command ใน Discord เท่านั้น</p><ul><li>/ask /find /related /status /index /jobs /job /new /machines /activity /help</li><li>ข้อความธรรมดาและการ reply ไม่เข้าระบบ ต้องเป็น slash command หรือปุ่ม</li><li>คำตอบที่มีชื่อไฟล์จะมีลิงก์ Google Drive ให้กดเปิด</li></ul></article>
+<article class="card" data-for="bot"><h3>Discord bot · Presale Hub</h3><p class="lead">ประตูหน้าของระบบ เป็น Discord application ของ hub เอง</p><ul><li>แยกจากบอตที่ Hermes ใช้ เพื่อไม่ให้คำสั่งสองระบบชนกัน</li><li>token เก็บใน Supabase Vault ไม่อยู่ในโค้ด</li><li>Discord ส่งคำสั่งที่เซ็นลายเซ็นแล้วมาที่ Edge Function</li></ul></article>
+<article class="card" data-for="edge"><h3>Edge Function · hub</h3><p class="lead">ตรวจ จัดเส้นทาง และจัดรูปคำตอบ เขียนด้วย Deno และ TypeScript</p><ul><li>เส้นทาง /discord /send /worker /release</li><li>ตรวจลายเซ็นทุกคำสั่ง และตอบ Discord ภายใน 3 วินาที (รับทราบก่อน แล้วตอบผ่าน webhook)</li><li>worker เรียกผ่าน /worker ด้วย device token ไม่ต่อ database ตรง</li></ul></article>
+<article class="card" data-for="pg"><h3>Postgres · schema hub</h3><p class="lead">ที่เก็บความจริงทั้งหมดของระบบ อยู่บน Supabase</p><ul><li>job, card, ข้อความที่ค้นได้, เวอร์ชันไฟล์ และ vector 384 มิติ (pgvector)</li><li>pgmq เป็นคิวงาน และ pg_cron เช็กสุขภาพทุก 5 นาที</li><li>แจ้งเตือน Discord เมื่อ worker ออฟไลน์เกิน 15 นาที, job ล้ม, รออนุมัติ, เวอร์ชันไม่ตรง หรือ index ไม่สแกนเกิน 4 ชม.</li></ul></article>
+<article class="card" data-for="worker"><h3>presale-worker · Python</h3><p class="lead">ตัวทำงานเดียวของระบบ รันบน Mini PC จาก git checkout</p><ul><li>ถาม hub หางานทุก 10 วินาที และสแกนโฟลเดอร์ทุกชั่วโมง</li><li>ไม่มี failover: เครื่องดับแล้วงานรอในคิวได้ 24 ชม. ก่อนหมดอายุ</li><li>เปิดปิดฟีเจอร์ด้วย config: scan, vision, embed, drive_links, vault</li></ul></article>
+<article class="card" data-for="claude"><h3>Claude Code CLI</h3><p class="lead">ตัวอ่านและเขียน เรียกจาก worker เป็น process แยก</p><ul><li>สร้าง card ด้วย haiku (ไม่ให้ใช้เครื่องมือ), อ่าน PDF สแกนและภาพด้วย vision รอบละไม่เกิน 3 ไฟล์</li><li>ตอบ /ask ด้วย sonnet ในโฟลเดอร์งานของเครื่องนี้ มีเพดานงบต่อหนึ่งงาน</li><li>ข้อความที่ Claude อ่านถูกส่งไปประมวลผลที่ Anthropic ระหว่างทำงาน</li></ul></article>
+<article class="card" data-for="drive"><h3>Google Drive · G:</h3><p class="lead">โฟลเดอร์ Presale และ Work ที่ซิงก์มาไว้ในเครื่อง</p><ul><li>worker อ่านอย่างเดียว ไม่แก้ไฟล์ลูกค้า</li><li>ลิงก์ Drive ได้จาก metadata ของ DriveFS ในเครื่อง ไม่เรียก API</li><li>ไฟล์ที่ยังไม่ซิงก์ไม่มีลิงก์ และลองใหม่วันละครั้ง</li></ul></article>
+<article class="card" data-for="vault"><h3>Obsidian vault</h3><p class="lead">มุมมองโน้ตที่สร้างอัตโนมัติ ไว้เปิดอ่านและไล่ลิงก์</p><ul><li>สร้างใน Presale Knowledge/_generated อัปเดตไม่เกินทุก 6 ชม.</li><li>โน้ตที่แก้เองไม่ถูกเขียนทับ</li><li>ความจริงอยู่ที่ hub: ลบโฟลเดอร์แล้วสร้างใหม่ได้</li></ul></article></div></div>
+<div class="scroll"><svg viewBox="0 0 1100 436" style="--w:960px" role="group" aria-labelledby="d1-title d1-desc" xmlns="http://www.w3.org/2000/svg"><title id="d1-title">Presale Hub: ภาพรวมระบบ</title><desc id="d1-desc">ผู้ใช้สั่งผ่าน Discord ไปยัง Edge Function และ Postgres บน Supabase ส่วน worker บน Mini PC ดึงงาน เรียก Claude อ่าน Google Drive และเขียนโน้ตลง Obsidian</desc><defs>
+<marker id="d1-ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--muted)"/></marker>
+<marker id="d1-ar-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker>
+<marker id="d1-ar-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--link)"/></marker>
+</defs><rect width="100%" height="100%" fill="#f5f5f5"/><rect x="244" y="40" width="344" height="376" rx="8" fill="var(--zone)" stroke="var(--rule)" stroke-width="0.8"/><rect x="256" y="33" width="128" height="14" rx="2" fill="var(--paper)"/><text x="320" y="43" class="zlabel" text-anchor="middle">SUPABASE · CLOUD</text>
+<rect x="648" y="40" width="428" height="376" rx="8" fill="var(--zone)" stroke="var(--rule)" stroke-width="0.8"/><rect x="660" y="33" width="172" height="14" rx="2" fill="var(--paper)"/><text x="746" y="43" class="zlabel" text-anchor="middle">MINI PC · เครื่องเดียว</text>
+<g class="edge" data-edge="slash" data-from="peach" data-to="bot" data-step="0"><path class="line" d="M 180,112 H 276" fill="none" stroke="var(--link)" stroke-width="1.2" marker-end="url(#d1-ar-link)"/><rect x="206" y="92" width="44" height="16" rx="2" fill="var(--paper)"/><text x="228" y="103" class="alabel" text-anchor="middle">SLASH</text></g>
+<g class="edge" data-edge="signed" data-from="bot" data-to="edge" data-step="0"><path class="line" d="M 412,144 V 176" fill="none" stroke="var(--link)" stroke-width="1.2" marker-end="url(#d1-ar-link)"/><rect x="416" y="152" width="48" height="16" rx="2" fill="var(--paper)"/><text x="440" y="163" class="alabel" text-anchor="middle">SIGNED</text></g>
+<g class="edge" data-edge="rpc" data-from="edge" data-to="pg" data-step="0"><path class="line" d="M 412,248 V 312" fill="none" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#d1-ar)"/><rect x="420" y="272" width="32" height="16" rx="2" fill="var(--paper)"/><text x="436" y="283" class="alabel" text-anchor="middle">RPC</text></g>
+<g class="edge" data-edge="claim" data-from="worker" data-to="edge" data-step="0"><path class="line" d="M 692,196 H 548" fill="none" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#d1-ar-accent)"/><rect x="572" y="176" width="96" height="16" rx="2" fill="var(--paper)"/><text x="620" y="187" class="alabel" text-anchor="middle">CLAIM · RESULT</text></g>
+<g class="edge" data-edge="job" data-from="edge" data-to="worker" data-step="0"><path class="line" d="M 548,228 H 692" fill="none" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#d1-ar-accent)"/><rect x="604" y="234" width="32" height="16" rx="2" fill="var(--paper)"/><text x="620" y="245" class="alabel" text-anchor="middle">JOB</text></g>
+<g class="edge" data-edge="ai" data-from="worker" data-to="claude" data-step="0"><path class="line" d="M 756,260 V 320" fill="none" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#d1-ar)"/><rect x="756" y="282" width="68" height="16" rx="2" fill="var(--paper)"/><text x="790" y="293" class="alabel" text-anchor="middle">claude -p</text></g>
+<g class="edge" data-edge="read" data-from="worker" data-to="drive" data-step="0"><path class="line" d="M 896,260 V 320" fill="none" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#d1-ar)"/><rect x="902" y="282" width="36" height="16" rx="2" fill="var(--paper)"/><text x="920" y="293" class="alabel" text-anchor="middle">READ</text></g>
+<g class="edge" data-edge="notes" data-from="worker" data-to="vault" data-step="0"><path class="line" d="M 1000,260 V 320" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#d1-ar)"/><rect x="1004" y="282" width="44" height="16" rx="2" fill="var(--paper)"/><text x="1026" y="293" class="alabel" text-anchor="middle">NOTES</text></g>
+<g class="edge" data-edge="alerts" data-from="pg" data-to="bot" data-step="0"><path class="line" d="M 276,354 H 260 V 124 H 276" fill="none" stroke="var(--link)" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#d1-ar-link)"/><rect x="188" y="232" width="48" height="16" rx="2" fill="var(--paper)"/><text x="212" y="243" class="alabel" text-anchor="middle">ALERTS</text></g>
+<g class="node" data-node="peach" data-first="0" role="button" tabindex="0" aria-label="Peach">
+<rect x="28" y="80" width="152" height="64" rx="6" fill="var(--paper)"/>
+<rect class="box" x="28" y="80" width="152" height="64" rx="6" fill="var(--input)" stroke="var(--soft)" stroke-width="1"/>
+<text x="40" y="105" class="nname">Peach</text>
+<text x="40" y="128" class="nsub">Discord / Hermes</text>
+</g>
+<g class="node" data-node="bot" data-first="0" role="button" tabindex="0" aria-label="Discord bot">
+<rect x="276" y="80" width="272" height="64" rx="6" fill="var(--paper)"/>
+<rect class="box" x="276" y="80" width="272" height="64" rx="6" fill="var(--ext)" stroke="var(--ext-stroke)" stroke-width="1"/>
+<use href="#lg-discord" x="288" y="90" width="20" height="20"/>
+<text x="316" y="105" class="nname">Discord bot</text>
+<text x="288" y="128" class="nsub">Presale Hub · /ask /find /status</text>
+</g>
+<g class="node" data-node="edge" data-first="0" role="button" tabindex="0" aria-label="Edge Function  hub">
+<rect x="276" y="176" width="272" height="72" rx="6" fill="var(--paper)"/>
+<rect class="box" x="276" y="176" width="272" height="72" rx="6" fill="#ffffff" stroke="var(--ink)" stroke-width="1"/>
+<use href="#lg-deno" x="288" y="186" width="20" height="20"/>
+<use href="#lg-typescript" x="314" y="186" width="20" height="20"/>
+<text x="342" y="201" class="nname">Edge Function  hub</text>
+<text x="288" y="224" class="nsub">verify · route · format reply</text>
+<text x="288" y="239" class="nsub">Deno · TypeScript</text>
+</g>
+<g class="node" data-node="pg" data-first="0" role="button" tabindex="0" aria-label="Postgres  (hub schema)">
+<rect x="276" y="312" width="272" height="84" rx="6" fill="var(--paper)"/>
+<rect class="box" x="276" y="312" width="272" height="84" rx="6" fill="var(--store)" stroke="var(--muted)" stroke-width="1"/>
+<use href="#lg-supabase" x="288" y="322" width="20" height="20"/>
+<use href="#lg-postgresql" x="314" y="322" width="20" height="20"/>
+<text x="342" y="337" class="nname">Postgres  (hub schema)</text>
+<text x="288" y="360" class="nsub">jobs · cards · chunks · vectors</text>
+<text x="288" y="375" class="nsub">pgmq · pg_cron · pgvector</text>
+</g>
+<g class="node" data-node="worker" data-first="0" role="button" tabindex="0" aria-label="presale-worker">
+<rect x="692" y="176" width="352" height="84" rx="6" fill="var(--paper)"/>
+<rect class="box" x="692" y="176" width="352" height="84" rx="6" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1"/>
+<use href="#lg-python" x="704" y="186" width="20" height="20"/>
+<text x="732" y="201" class="nname">presale-worker</text>
+<text x="704" y="224" class="nsub">scan · cards · embed · vault · answer</text>
+<text x="704" y="239" class="nsub">ถาม hub หางานทุก 10 วิ</text>
+</g>
+<g class="node" data-node="claude" data-first="0" role="button" tabindex="0" aria-label="Claude Code CLI">
+<rect x="668" y="320" width="204" height="84" rx="6" fill="var(--paper)"/>
+<rect class="box" x="668" y="320" width="204" height="84" rx="6" fill="#ffffff" stroke="var(--ink)" stroke-width="1"/>
+<use href="#lg-claude" x="680" y="330" width="20" height="20"/>
+<text x="708" y="345" class="nname">Claude Code CLI</text>
+<text x="680" y="368" class="nsub">cards (haiku)</text>
+<text x="680" y="383" class="nsub">vision · /ask (sonnet)</text>
+</g>
+<g class="node" data-node="drive" data-first="0" role="button" tabindex="0" aria-label="Drive">
+<rect x="884" y="320" width="92" height="84" rx="6" fill="var(--paper)"/>
+<rect class="box" x="884" y="320" width="92" height="84" rx="6" fill="var(--ext)" stroke="var(--ext-stroke)" stroke-width="1"/>
+<use href="#lg-googledrive" x="896" y="330" width="20" height="20"/>
+<text x="924" y="345" class="nname">Drive</text>
+<text x="896" y="368" class="nsub">Presale</text>
+<text x="896" y="383" class="nsub">+ Work</text>
+</g>
+<g class="node" data-node="vault" data-first="0" role="button" tabindex="0" aria-label="Vault">
+<rect x="984" y="320" width="80" height="84" rx="6" fill="var(--paper)"/>
+<rect class="box" x="984" y="320" width="80" height="84" rx="6" fill="var(--ext)" stroke="var(--ext-stroke)" stroke-width="1"/>
+<use href="#lg-obsidian" x="996" y="330" width="20" height="20"/>
+<text x="1024" y="345" class="nname">Vault</text>
+<text x="996" y="368" class="nsub">Obsidian</text>
+</g><circle r="3.5" fill="var(--accent)" opacity="0" class="tok" aria-hidden="true" focusable="false"><animateMotion dur="14.0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.0000;0.1100;1" path="M 180,112 H 276"/><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.0000;0.0050;0.1050;0.1100;1"/></circle>
+<circle r="3.5" fill="var(--accent)" opacity="0" class="tok" aria-hidden="true" focusable="false"><animateMotion dur="14.0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.1429;0.2529;1" path="M 412,144 V 176"/><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.1429;0.1479;0.2479;0.2529;1"/></circle>
+<circle r="3.5" fill="var(--accent)" opacity="0" class="tok" aria-hidden="true" focusable="false"><animateMotion dur="14.0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.2857;0.3957;1" path="M 412,248 V 312"/><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.2857;0.2907;0.3907;0.3957;1"/></circle>
+<circle r="3.5" fill="var(--accent)" opacity="0" class="tok" aria-hidden="true" focusable="false"><animateMotion dur="14.0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.4286;0.5386;1" path="M 548,228 H 692"/><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.4286;0.4336;0.5336;0.5386;1"/></circle>
+<circle r="3.5" fill="var(--accent)" opacity="0" class="tok" aria-hidden="true" focusable="false"><animateMotion dur="14.0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.5714;0.6814;1" path="M 756,260 V 320"/><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.5714;0.5764;0.6764;0.6814;1"/></circle>
+<circle r="3.5" fill="var(--accent)" opacity="0" class="tok" aria-hidden="true" focusable="false"><animateMotion dur="14.0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.7143;0.8243;1" path="M 896,260 V 320"/><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.7143;0.7193;0.8193;0.8243;1"/></circle>
+<circle r="3.5" fill="var(--accent)" opacity="0" class="tok" aria-hidden="true" focusable="false"><animateMotion dur="14.0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.8571;0.9671;1" path="M 692,196 H 548"/><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.8571;0.8621;0.9621;0.9671;1"/></circle></svg></div>
+<div class="legend"><span><i style="border-color:var(--link)"></i>Discord / HTTP</span><span><i style="border-color:var(--accent)"></i>worker ↔ hub</span><span><i style="border-color:var(--muted)"></i>ข้อมูลภายใน</span><span><i style="border-color:var(--muted);border-top-style:dashed"></i>แจ้งเตือน / เขียนออก</span></div>
+</section>
+
+<section class="fig" id="ask" data-stepper data-id="ask">
+<h2>เส้นทางของหนึ่งคำถาม</h2>
+<p class="sub">พิมพ์ <code>/ask</code> แล้วเกิดอะไรขึ้นบ้าง กดเล่นเพื่อดูทีละขั้น หรือกดตัวเลขเพื่อข้ามไปขั้นที่ต้องการ</p>
+<div class="controls" role="group" aria-label="ควบคุมการเล่น">
+  <button type="button" class="btn" data-act="prev">ก่อนหน้า</button>
+  <button type="button" class="btn primary" data-act="play" aria-pressed="false">เล่น</button>
+  <button type="button" class="btn" data-act="next">ถัดไป</button>
+  <button type="button" class="btn" data-act="replay">เริ่มใหม่</button>
+  <span class="dots" data-dots></span>
+</div>
+<div class="scroll"><svg viewBox="0 0 1100 420" style="--w:960px" role="group" aria-labelledby="d2-title d2-desc" xmlns="http://www.w3.org/2000/svg"><title id="d2-title">เส้นทางของคำถาม /ask</title><desc id="d2-desc">คำถามจาก Discord ผ่าน Edge Function เข้าคิว worker รับงานและค้น index เรียก Claude แล้วส่งคำตอบกลับ Discord ผ่าน outbox</desc><defs>
+<marker id="d2-ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--muted)"/></marker>
+<marker id="d2-ar-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker>
+<marker id="d2-ar-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--link)"/></marker>
+</defs><rect width="100%" height="100%" fill="#f5f5f5"/><g class="edge" data-edge="e1" data-from="ask" data-to="edge" data-step="1"><path class="line" d="M 244,100 H 292" fill="none" stroke="var(--link)" stroke-width="1.2" marker-end="url(#d2-ar-link)"/><rect x="258" y="80" width="20" height="16" rx="2" fill="var(--paper)"/><text x="268" y="91" class="alabel" text-anchor="middle">1</text></g>
+<g class="edge" data-edge="e2" data-from="edge" data-to="queue" data-step="2"><path class="line" d="M 532,100 H 580" fill="none" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#d2-ar)"/><rect x="546" y="80" width="20" height="16" rx="2" fill="var(--paper)"/><text x="556" y="91" class="alabel" text-anchor="middle">2</text></g>
+<g class="edge" data-edge="e3" data-from="queue" data-to="approve" data-step="3"><path class="line" d="M 820,100 H 868" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#d2-ar)"/><rect x="834" y="80" width="20" height="16" rx="2" fill="var(--paper)"/><text x="844" y="91" class="alabel" text-anchor="middle">3</text></g>
+<g class="edge" data-edge="e4" data-from="queue" data-to="worker" data-step="4"><path class="line" d="M 700,140 V 200" fill="none" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#d2-ar-accent)"/><rect x="714" y="162" width="20" height="16" rx="2" fill="var(--paper)"/><text x="724" y="173" class="alabel" text-anchor="middle">4</text></g>
+<g class="edge" data-edge="e5" data-from="worker" data-to="index" data-step="5"><path class="line" d="M 700,288 V 332" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#d2-ar)"/><rect x="714" y="302" width="20" height="16" rx="2" fill="var(--paper)"/><text x="724" y="313" class="alabel" text-anchor="middle">5</text></g>
+<g class="edge" data-edge="e6" data-from="worker" data-to="outbox" data-step="6"><path class="line" d="M 580,244 H 532" fill="none" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#d2-ar-accent)"/><rect x="546" y="224" width="20" height="16" rx="2" fill="var(--paper)"/><text x="556" y="235" class="alabel" text-anchor="middle">6</text></g>
+<g class="edge" data-edge="e7" data-from="outbox" data-to="discord" data-step="6"><path class="line" d="M 292,244 H 244" fill="none" stroke="var(--link)" stroke-width="1.2" marker-end="url(#d2-ar-link)"/><rect x="258" y="224" width="20" height="16" rx="2" fill="var(--paper)"/><text x="268" y="235" class="alabel" text-anchor="middle">6</text></g>
+<g class="node" data-node="ask" data-first="1" role="button" tabindex="0" aria-label="/ask  คำถาม">
+<rect x="28" y="60" width="216" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="28" y="60" width="216" height="80" rx="6" fill="var(--input)" stroke="var(--soft)" stroke-width="1"/>
+<use href="#lg-discord" x="40" y="70" width="20" height="20"/>
+<text x="68" y="85" class="nname">/ask  คำถาม</text>
+<text x="40" y="108" class="nsub">พิมพ์ text หรือ job:<รหัส></text>
+<text x="40" y="123" class="nsub">ต่อบทสนทนาเดิมได้ 2 ชม.</text>
+</g>
+<g class="node" data-node="edge" data-first="1" role="button" tabindex="0" aria-label="Edge Function">
+<rect x="292" y="60" width="240" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="292" y="60" width="240" height="80" rx="6" fill="#ffffff" stroke="var(--ink)" stroke-width="1"/>
+<use href="#lg-deno" x="304" y="70" width="20" height="20"/>
+<text x="332" y="85" class="nname">Edge Function</text>
+<text x="304" y="108" class="nsub">เช็กลายเซ็น + สิทธิ์</text>
+<text x="304" y="123" class="nsub">ตอบ Discord ใน 3 วินาที</text>
+</g>
+<g class="node" data-node="queue" data-first="2" role="button" tabindex="0" aria-label="Job ในคิว pgmq">
+<rect x="580" y="60" width="240" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="580" y="60" width="240" height="80" rx="6" fill="var(--store)" stroke="var(--muted)" stroke-width="1"/>
+<use href="#lg-postgresql" x="592" y="70" width="20" height="20"/>
+<text x="620" y="85" class="nname">Job ในคิว pgmq</text>
+<text x="592" y="108" class="nsub">q_mini · q_any</text>
+<text x="592" y="123" class="nsub">รอ worker มารับ</text>
+</g>
+<g class="node" data-node="approve" data-first="3" role="button" tabindex="0" aria-label="รออนุมัติ">
+<rect x="868" y="60" width="184" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="868" y="60" width="184" height="80" rx="6" fill="var(--ext)" stroke="var(--ext-stroke)" stroke-width="1"/>
+<text x="880" y="85" class="nname">รออนุมัติ</text>
+<text x="880" y="108" class="nsub">ปุ่ม Approve / Reject</text>
+<text x="880" y="123" class="nsub">เฉพาะงานที่ต้องขอ</text>
+</g>
+<g class="node" data-node="worker" data-first="4" role="button" tabindex="0" aria-label="Worker รับงาน">
+<rect x="580" y="200" width="240" height="88" rx="6" fill="var(--paper)"/>
+<rect class="box" x="580" y="200" width="240" height="88" rx="6" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1"/>
+<use href="#lg-python" x="592" y="210" width="20" height="20"/>
+<use href="#lg-claude" x="618" y="210" width="20" height="20"/>
+<text x="646" y="225" class="nname">Worker รับงาน</text>
+<text x="592" y="248" class="nsub">claude -p ในโฟลเดอร์งาน</text>
+<text x="592" y="263" class="nsub">ฟอร์แมต + ลิงก์ Drive</text>
+</g>
+<g class="node" data-node="index" data-first="5" role="button" tabindex="0" aria-label="Index เอกสาร">
+<rect x="580" y="332" width="240" height="64" rx="6" fill="var(--paper)"/>
+<rect class="box" x="580" y="332" width="240" height="64" rx="6" fill="var(--store)" stroke="var(--muted)" stroke-width="1"/>
+<use href="#lg-supabase" x="592" y="342" width="20" height="20"/>
+<text x="620" y="357" class="nname">Index เอกสาร</text>
+<text x="592" y="380" class="nsub">card · ข้อความเต็ม · vector</text>
+</g>
+<g class="node" data-node="outbox" data-first="6" role="button" tabindex="0" aria-label="Outbox ใน hub">
+<rect x="292" y="200" width="240" height="88" rx="6" fill="var(--paper)"/>
+<rect class="box" x="292" y="200" width="240" height="88" rx="6" fill="#ffffff" stroke="var(--ink)" stroke-width="1"/>
+<use href="#lg-deno" x="304" y="210" width="20" height="20"/>
+<text x="332" y="225" class="nname">Outbox ใน hub</text>
+<text x="304" y="248" class="nsub">Edge /send โพสต์เข้า channel</text>
+<text x="304" y="263" class="nsub">ส่งไม่ผ่านลองใหม่ 30 นาที</text>
+</g>
+<g class="node" data-node="discord" data-first="6" role="button" tabindex="0" aria-label="Discord">
+<rect x="28" y="200" width="216" height="88" rx="6" fill="var(--paper)"/>
+<rect class="box" x="28" y="200" width="216" height="88" rx="6" fill="var(--input)" stroke="var(--soft)" stroke-width="1"/>
+<use href="#lg-discord" x="40" y="210" width="20" height="20"/>
+<text x="68" y="225" class="nname">Discord</text>
+<text x="40" y="248" class="nsub">คำตอบใน channel</text>
+<text x="40" y="263" class="nsub">ไฟล์อ้างอิงกดเปิดได้</text>
+</g></svg></div>
+<div class="caption" role="status" aria-live="polite" aria-atomic="true" data-caption></div>
+<p class="keys">ลูกศรซ้ายขวา เลื่อนขั้น · Home เริ่มต้น · End ขั้นสุดท้าย · Space เล่นหรือหยุด</p>
+<script type="application/json" data-steps>[{"title": "พิมพ์ /ask", "text": "คำถามออกจาก Discord เป็นคำสั่งที่เซ็นลายเซ็นแล้ว ถ้าพิมพ์ job:<รหัส> นำหน้า จะต่อบทสนทนาของงานนั้นได้ไม่จำกัดอายุ ไม่มีรหัสจะต่อบทสนทนาเดิมที่เปิดอยู่ภายใน 2 ชั่วโมง", "code": "interaction → POST /hub/discord", "edges": ["e1"], "nodes": ["ask", "edge"]}, {"title": "Edge Function ตรวจและรับทราบ", "text": "ตรวจลายเซ็นและสิทธิ์ผู้ใช้ ตอบ Discord ทันทีว่ารับแล้ว เพราะ Discord รอได้แค่ 3 วินาที จากนั้นสร้าง job ในคิว", "code": "discord_ask → create_job", "edges": ["e2"], "nodes": ["edge", "queue"]}, {"title": "งานบางชนิดรอให้กดอนุมัติ", "text": "งานที่ต้องขออนุมัติจะหยุดรอปุ่ม Approve หรือ Reject ใน Discord ก่อน กด Approve แล้ว job กลับเข้าคิว ส่วนงานถามทั่วไปข้ามขั้นนี้", "code": "approvals · ap: / rj: buttons", "edges": ["e3"], "nodes": ["queue", "approve"]}, {"title": "Worker มารับงาน", "text": "worker ถาม hub ทุก 10 วินาที เมื่อเจอ job จะรับงานและต่ออายุงานไว้เรื่อยๆ ถ้า worker ตายกลางทาง งานหลุดกลับเข้าคิวและถูกทำเครื่องหมายว่าถูกขัดจังหวะ", "code": "claim_job · renew_lease", "edges": ["e4"], "nodes": ["queue", "worker"]}, {"title": "Claude ค้นแล้วเขียนคำตอบ", "text": "worker เปิด claude -p ในโฟลเดอร์งาน Claude ค้นเอกสารผ่าน hub (ค้นคำและค้นตามความหมาย) แล้วเขียนคำตอบ worker เติมเวลาแก้ไฟล์และลิงก์ Drive ให้ชื่อไฟล์ที่อ้างถึง", "code": "search_text · related_documents", "edges": ["e5"], "nodes": ["worker", "index"]}, {"title": "ส่งคำตอบกลับ Discord", "text": "worker ส่งผลเข้า outbox ใน hub แล้ว Edge Function โพสต์ลง channel ถ้าส่งไม่ผ่านจะลองใหม่ทุก 30 นาทีนาน 24 ชั่วโมง ค่าใช้จ่ายไม่แสดงใน Discord", "code": "finish_job → outbox_claim_discord → /hub/send", "edges": ["e6", "e7"], "nodes": ["worker", "outbox", "discord"]}]</script>
+<ol class="static-steps"><li><strong>พิมพ์ /ask</strong> คำถามออกจาก Discord เป็นคำสั่งที่เซ็นลายเซ็นแล้ว ถ้าพิมพ์ job:<รหัส> นำหน้า จะต่อบทสนทนาของงานนั้นได้ไม่จำกัดอายุ ไม่มีรหัสจะต่อบทสนทนาเดิมที่เปิดอยู่ภายใน 2 ชั่วโมง <code>interaction → POST /hub/discord</code></li><li><strong>Edge Function ตรวจและรับทราบ</strong> ตรวจลายเซ็นและสิทธิ์ผู้ใช้ ตอบ Discord ทันทีว่ารับแล้ว เพราะ Discord รอได้แค่ 3 วินาที จากนั้นสร้าง job ในคิว <code>discord_ask → create_job</code></li><li><strong>งานบางชนิดรอให้กดอนุมัติ</strong> งานที่ต้องขออนุมัติจะหยุดรอปุ่ม Approve หรือ Reject ใน Discord ก่อน กด Approve แล้ว job กลับเข้าคิว ส่วนงานถามทั่วไปข้ามขั้นนี้ <code>approvals · ap: / rj: buttons</code></li><li><strong>Worker มารับงาน</strong> worker ถาม hub ทุก 10 วินาที เมื่อเจอ job จะรับงานและต่ออายุงานไว้เรื่อยๆ ถ้า worker ตายกลางทาง งานหลุดกลับเข้าคิวและถูกทำเครื่องหมายว่าถูกขัดจังหวะ <code>claim_job · renew_lease</code></li><li><strong>Claude ค้นแล้วเขียนคำตอบ</strong> worker เปิด claude -p ในโฟลเดอร์งาน Claude ค้นเอกสารผ่าน hub (ค้นคำและค้นตามความหมาย) แล้วเขียนคำตอบ worker เติมเวลาแก้ไฟล์และลิงก์ Drive ให้ชื่อไฟล์ที่อ้างถึง <code>search_text · related_documents</code></li><li><strong>ส่งคำตอบกลับ Discord</strong> worker ส่งผลเข้า outbox ใน hub แล้ว Edge Function โพสต์ลง channel ถ้าส่งไม่ผ่านจะลองใหม่ทุก 30 นาทีนาน 24 ชั่วโมง ค่าใช้จ่ายไม่แสดงใน Discord <code>finish_job → outbox_claim_discord → /hub/send</code></li></ol>
+</section>
+
+<section class="fig" id="index" data-stepper data-id="index">
+<h2>จากไฟล์หนึ่งไฟล์ เป็น card และ vector</h2>
+<p class="sub">นี่คือสิ่งที่ worker ทำเบื้องหลังทุกชั่วโมง เพื่อให้คำสั่งค้นหาและ /ask มีข้อมูลให้ใช้</p>
+<div class="controls" role="group" aria-label="ควบคุมการเล่น">
+  <button type="button" class="btn" data-act="prev">ก่อนหน้า</button>
+  <button type="button" class="btn primary" data-act="play" aria-pressed="false">เล่น</button>
+  <button type="button" class="btn" data-act="next">ถัดไป</button>
+  <button type="button" class="btn" data-act="replay">เริ่มใหม่</button>
+  <span class="dots" data-dots></span>
+</div>
+<div class="scroll"><svg viewBox="0 0 1100 380" style="--w:960px" role="group" aria-labelledby="d3-title d3-desc" xmlns="http://www.w3.org/2000/svg"><title id="d3-title">ไฟล์หนึ่งไฟล์กลายเป็น card และ vector</title><desc id="d3-desc">ไฟล์ใน Drive ถูกดึงข้อความ สรุปเป็น card ส่งขึ้น hub แปลงเป็น vector บน CPU แล้วใช้ในคำสั่งค้นหาและ Obsidian vault</desc><defs>
+<marker id="d3-ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--muted)"/></marker>
+<marker id="d3-ar-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker>
+<marker id="d3-ar-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--link)"/></marker>
+</defs><rect width="100%" height="100%" fill="#f5f5f5"/><g class="edge" data-edge="p1" data-from="file" data-to="extract" data-step="1"><path class="line" d="M 244,100 H 292" fill="none" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#d3-ar)"/><rect x="258" y="80" width="20" height="16" rx="2" fill="var(--paper)"/><text x="268" y="91" class="alabel" text-anchor="middle">1</text></g>
+<g class="edge" data-edge="p2" data-from="extract" data-to="card" data-step="2"><path class="line" d="M 532,100 H 580" fill="none" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#d3-ar)"/><rect x="546" y="80" width="20" height="16" rx="2" fill="var(--paper)"/><text x="556" y="91" class="alabel" text-anchor="middle">2</text></g>
+<g class="edge" data-edge="p3" data-from="card" data-to="store" data-step="3"><path class="line" d="M 820,100 H 868" fill="none" stroke="var(--link)" stroke-width="1.2" marker-end="url(#d3-ar-link)"/><rect x="834" y="80" width="20" height="16" rx="2" fill="var(--paper)"/><text x="844" y="91" class="alabel" text-anchor="middle">3</text></g>
+<g class="edge" data-edge="p4" data-from="store" data-to="embed" data-step="4"><path class="line" d="M 960,140 V 200" fill="none" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#d3-ar-accent)"/><rect x="974" y="162" width="20" height="16" rx="2" fill="var(--paper)"/><text x="984" y="173" class="alabel" text-anchor="middle">4</text></g>
+<g class="edge" data-edge="p5" data-from="embed" data-to="vector" data-step="5"><path class="line" d="M 868,244 H 820" fill="none" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#d3-ar-accent)"/><rect x="834" y="224" width="20" height="16" rx="2" fill="var(--paper)"/><text x="844" y="235" class="alabel" text-anchor="middle">5</text></g>
+<g class="edge" data-edge="p6" data-from="vector" data-to="use" data-step="6"><path class="line" d="M 580,244 H 532" fill="none" stroke="var(--link)" stroke-width="1.2" marker-end="url(#d3-ar-link)"/><rect x="546" y="224" width="20" height="16" rx="2" fill="var(--paper)"/><text x="556" y="235" class="alabel" text-anchor="middle">6</text></g>
+<g class="edge" data-edge="p7" data-from="vector" data-to="vault" data-step="6"><path class="line" d="M 700,288 V 340 H 136 V 292" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#d3-ar)"/><rect x="398" y="332" width="44" height="16" rx="2" fill="var(--paper)"/><text x="420" y="343" class="alabel" text-anchor="middle">NOTES</text></g>
+<g class="node" data-node="file" data-first="1" role="button" tabindex="0" aria-label="ไฟล์ใน Drive">
+<rect x="28" y="60" width="216" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="28" y="60" width="216" height="80" rx="6" fill="var(--ext)" stroke="var(--ext-stroke)" stroke-width="1"/>
+<use href="#lg-googledrive" x="40" y="70" width="20" height="20"/>
+<text x="68" y="85" class="nname">ไฟล์ใน Drive</text>
+<text x="40" y="108" class="nsub">Presale + Work</text>
+<text x="40" y="123" class="nsub">ใหม่หรือถูกแก้</text>
+</g>
+<g class="node" data-node="extract" data-first="1" role="button" tabindex="0" aria-label="ดึงข้อความ">
+<rect x="292" y="60" width="240" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="292" y="60" width="240" height="80" rx="6" fill="#ffffff" stroke="var(--ink)" stroke-width="1"/>
+<use href="#lg-python" x="304" y="70" width="20" height="20"/>
+<use href="#lg-sqlite" x="330" y="70" width="20" height="20"/>
+<text x="358" y="85" class="nname">ดึงข้อความ</text>
+<text x="304" y="108" class="nsub">docx pptx xlsx pdf</text>
+<text x="304" y="123" class="nsub">สแกน/ภาพ: vision ≤3 ไฟล์/รอบ</text>
+</g>
+<g class="node" data-node="card" data-first="2" role="button" tabindex="0" aria-label="Card สรุป">
+<rect x="580" y="60" width="240" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="580" y="60" width="240" height="80" rx="6" fill="#ffffff" stroke="var(--ink)" stroke-width="1"/>
+<use href="#lg-claude" x="592" y="70" width="20" height="20"/>
+<text x="620" y="85" class="nname">Card สรุป</text>
+<text x="592" y="108" class="nsub">Claude haiku ไม่ใช้เครื่องมือ</text>
+<text x="592" y="123" class="nsub">หนึ่งไฟล์หนึ่งใบ</text>
+</g>
+<g class="node" data-node="store" data-first="3" role="button" tabindex="0" aria-label="Hub">
+<rect x="868" y="60" width="184" height="80" rx="6" fill="var(--paper)"/>
+<rect class="box" x="868" y="60" width="184" height="80" rx="6" fill="var(--store)" stroke="var(--muted)" stroke-width="1"/>
+<use href="#lg-supabase" x="880" y="70" width="20" height="20"/>
+<text x="908" y="85" class="nname">Hub</text>
+<text x="880" y="108" class="nsub">card · ข้อความค้นได้</text>
+<text x="880" y="123" class="nsub">เวอร์ชันไฟล์</text>
+</g>
+<g class="node" data-node="embed" data-first="4" role="button" tabindex="0" aria-label="Embed">
+<rect x="868" y="200" width="184" height="88" rx="6" fill="var(--paper)"/>
+<rect class="box" x="868" y="200" width="184" height="88" rx="6" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1"/>
+<use href="#lg-onnx" x="880" y="210" width="20" height="20"/>
+<use href="#lg-huggingface" x="906" y="210" width="20" height="20"/>
+<text x="934" y="225" class="nname">Embed</text>
+<text x="880" y="248" class="nsub">e5-small บน CPU</text>
+<text x="880" y="263" class="nsub">ไม่มีค่า token</text>
+</g>
+<g class="node" data-node="vector" data-first="5" role="button" tabindex="0" aria-label="Vector 384 มิติ">
+<rect x="580" y="200" width="240" height="88" rx="6" fill="var(--paper)"/>
+<rect class="box" x="580" y="200" width="240" height="88" rx="6" fill="var(--store)" stroke="var(--muted)" stroke-width="1"/>
+<use href="#lg-postgresql" x="592" y="210" width="20" height="20"/>
+<text x="620" y="225" class="nname">Vector 384 มิติ</text>
+<text x="592" y="248" class="nsub">halfvec + HNSW</text>
+<text x="592" y="263" class="nsub">ไทยและอังกฤษ</text>
+</g>
+<g class="node" data-node="use" data-first="6" role="button" tabindex="0" aria-label="ค้นและหาเอกสารใกล้กัน">
+<rect x="292" y="200" width="240" height="88" rx="6" fill="var(--paper)"/>
+<rect class="box" x="292" y="200" width="240" height="88" rx="6" fill="var(--input)" stroke="var(--soft)" stroke-width="1"/>
+<use href="#lg-discord" x="304" y="210" width="20" height="20"/>
+<text x="332" y="225" class="nname">ค้นและหาเอกสารใกล้กัน</text>
+<text x="304" y="248" class="nsub">/find ค้นคำ</text>
+<text x="304" y="263" class="nsub">/related ค้นตามความหมาย</text>
+</g>
+<g class="node" data-node="vault" data-first="6" role="button" tabindex="0" aria-label="Obsidian vault">
+<rect x="28" y="200" width="216" height="88" rx="6" fill="var(--paper)"/>
+<rect class="box" x="28" y="200" width="216" height="88" rx="6" fill="var(--ext)" stroke="var(--ext-stroke)" stroke-width="1"/>
+<use href="#lg-obsidian" x="40" y="210" width="20" height="20"/>
+<text x="68" y="225" class="nname">Obsidian vault</text>
+<text x="40" y="248" class="nsub">โน้ต + ลิงก์ความเกี่ยวข้อง</text>
+<text x="40" y="263" class="nsub">อัปเดตไม่เกินทุก 6 ชม.</text>
+</g></svg></div>
+<div class="caption" role="status" aria-live="polite" aria-atomic="true" data-caption></div>
+<p class="keys">ลูกศรซ้ายขวา เลื่อนขั้น · Home เริ่มต้น · End ขั้นสุดท้าย · Space เล่นหรือหยุด</p>
+<script type="application/json" data-steps>[{"title": "สแกนทุกชั่วโมง", "text": "worker เดินโฟลเดอร์แล้วเทียบกับ state ในเครื่อง (SQLite) ไฟล์ใหม่หรือที่แก้จะถูกดึงข้อความด้วยไลบรารี ส่วน PDF สแกนและภาพให้ Claude อ่านด้วย vision รอบละไม่เกิน 3 ไฟล์", "code": "scan_every_minutes = 60 · vision_per_run = 3", "edges": ["p1"], "nodes": ["file", "extract"]}, {"title": "ทำ card ด้วย haiku", "text": "ข้อความที่ได้ถูกส่งเป็นชุดให้ claude -p ที่ไม่มีสิทธิ์ใช้เครื่องมือ เพื่อสรุปเป็น card หนึ่งใบต่อไฟล์ ไฟล์ที่ไม่ต้องมี card เช่นรูปและสื่อเก็บแค่ metadata", "code": "card_model = haiku", "edges": ["p2"], "nodes": ["extract", "card"]}, {"title": "ส่งขึ้น hub", "text": "hub รับ card ข้อความที่ใช้ค้น และเวอร์ชันของไฟล์ worker เก็บ state ในเครื่องหลังจาก hub รับแล้วเท่านั้น จึงไม่มีไฟล์ที่ทำเครื่องหมายว่าเสร็จทั้งที่ยังไม่ถึง hub", "code": "save_card · doc_chunks_put · doc_version_put", "edges": ["p3"], "nodes": ["card", "store"]}, {"title": "ขอรายการที่ยังไม่มี vector", "text": "หลังรอบสแกนจบ worker ถาม hub ว่า card ไหนยังไม่มี vector hub คำนวณ hash ของ card เอง ทำให้ card ที่แก้แล้วถูกทำใหม่ และเปลี่ยนโมเดลแล้วทำใหม่ทั้งชุดได้", "code": "doc_embedding_todo", "edges": ["p4"], "nodes": ["store", "embed"]}, {"title": "แปลงเป็น vector บน CPU", "text": "multilingual-e5-small รันใน process แยกบน CPU ของเครื่อง ไม่เสีย token วัดได้ 35 ถึง 59 card ต่อวินาทีบนเครื่องนี้ ผลลัพธ์ 384 มิติเก็บใน pgvector", "code": "doc_embeddings_put", "edges": ["p5"], "nodes": ["embed", "vector"]}, {"title": "ใช้งานจริง", "text": "/find ค้นคำในข้อความเต็ม (ภาษาไทยตัดคำที่เว้นวรรค) ส่วน /related ใช้ vector หาเอกสารที่ความหมายใกล้กัน และ vault ใช้ vector เดียวกันสร้างลิงก์ความเกี่ยวข้องในโน้ต", "code": "search_text · related_by_name · vault_tick", "edges": ["p6", "p7"], "nodes": ["vector", "use", "vault"]}]</script>
+<ol class="static-steps"><li><strong>สแกนทุกชั่วโมง</strong> worker เดินโฟลเดอร์แล้วเทียบกับ state ในเครื่อง (SQLite) ไฟล์ใหม่หรือที่แก้จะถูกดึงข้อความด้วยไลบรารี ส่วน PDF สแกนและภาพให้ Claude อ่านด้วย vision รอบละไม่เกิน 3 ไฟล์ <code>scan_every_minutes = 60 · vision_per_run = 3</code></li><li><strong>ทำ card ด้วย haiku</strong> ข้อความที่ได้ถูกส่งเป็นชุดให้ claude -p ที่ไม่มีสิทธิ์ใช้เครื่องมือ เพื่อสรุปเป็น card หนึ่งใบต่อไฟล์ ไฟล์ที่ไม่ต้องมี card เช่นรูปและสื่อเก็บแค่ metadata <code>card_model = haiku</code></li><li><strong>ส่งขึ้น hub</strong> hub รับ card ข้อความที่ใช้ค้น และเวอร์ชันของไฟล์ worker เก็บ state ในเครื่องหลังจาก hub รับแล้วเท่านั้น จึงไม่มีไฟล์ที่ทำเครื่องหมายว่าเสร็จทั้งที่ยังไม่ถึง hub <code>save_card · doc_chunks_put · doc_version_put</code></li><li><strong>ขอรายการที่ยังไม่มี vector</strong> หลังรอบสแกนจบ worker ถาม hub ว่า card ไหนยังไม่มี vector hub คำนวณ hash ของ card เอง ทำให้ card ที่แก้แล้วถูกทำใหม่ และเปลี่ยนโมเดลแล้วทำใหม่ทั้งชุดได้ <code>doc_embedding_todo</code></li><li><strong>แปลงเป็น vector บน CPU</strong> multilingual-e5-small รันใน process แยกบน CPU ของเครื่อง ไม่เสีย token วัดได้ 35 ถึง 59 card ต่อวินาทีบนเครื่องนี้ ผลลัพธ์ 384 มิติเก็บใน pgvector <code>doc_embeddings_put</code></li><li><strong>ใช้งานจริง</strong> /find ค้นคำในข้อความเต็ม (ภาษาไทยตัดคำที่เว้นวรรค) ส่วน /related ใช้ vector หาเอกสารที่ความหมายใกล้กัน และ vault ใช้ vector เดียวกันสร้างลิงก์ความเกี่ยวข้องในโน้ต <code>search_text · related_by_name · vault_tick</code></li></ol>
+</section>
+
+<dl class="facts" id="facts">
+<dt>ข้อมูลอะไรออกจากเครื่อง</dt><dd>ขึ้น Supabase: card สรุป ข้อความเต็มที่ใช้ค้น vector และชื่อ path ส่วนไฟล์ต้นฉบับไม่ถูกอัปโหลดไปเก็บ แต่ข้อความที่ Claude อ่านระหว่างทำ card และตอบคำถามจะถูกส่งไปประมวลผลที่ Anthropic</dd>
+<dt>เครื่องนี้ดับแล้วเป็นอย่างไร</dt><dd>งานใน <code>/ask</code> รอในคิวได้ 24 ชม. (ค่าเริ่มต้น) แล้วหมดอายุ Discord <code>/status</code> แสดงเครื่องออฟไลน์ และ hub แจ้งเตือนเอง ระบบมี worker เครื่องเดียว ไม่มี failover</dd>
+<dt>กลับมาเองหลัง reboot</dt><dd>scheduled task ตอน logon เปิด worker และเปิดใหม่ภายใน 30 วินาทีถ้า process ตาย Windows ล็อกอินอัตโนมัติอยู่ เครื่องจึงกลับมาเองโดยไม่ต้องมีคนอยู่หน้าจอ</dd>
+</dl>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var body = document.body;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var HOLD = 3400;                                   // ms per step: long enough to read the caption
+
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+
+  function reveal(box, els) {
+    if (!box || !els.length || box.scrollWidth <= box.clientWidth + 2) { return; }
+    var c = box.getBoundingClientRect(), lo = 1e9, hi = -1e9;
+    els.forEach(function (el) { var r = el.getBoundingClientRect(); lo = Math.min(lo, r.left); hi = Math.max(hi, r.right); });
+    box.scrollTo({ left: box.scrollLeft + (lo - c.left) - (c.width - (hi - lo)) / 2, behavior: reduce ? 'auto' : 'smooth' });
+  }
+
+  // ---------------------------------------------------------------- explorer (overview)
+  function explorer(fig) {
+    var nodes = $$('.node', fig), edges = $$('.edge', fig), chips = $$('[data-chip]', fig), cards = $$('.card', fig), hint = $('[data-hint]', fig);
+    function select(id, fromHash) {
+      if (!id) { fig.removeAttribute('data-sel'); } else { fig.setAttribute('data-sel', id); }
+      var near = {};
+      edges.forEach(function (e) {
+        var on = !!id && (e.dataset.from === id || e.dataset.to === id);
+        e.classList.toggle('is-on', on);
+        if (on) { near[e.dataset.from] = 1; near[e.dataset.to] = 1; }
+      });
+      nodes.forEach(function (n) { n.classList.toggle('is-on', n.dataset.node === id); n.classList.toggle('is-near', !!near[n.dataset.node] && n.dataset.node !== id); });
+      chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c.dataset.chip === id)); });
+      cards.forEach(function (c) { c.classList.toggle('is-shown', c.dataset['for'] === id); });
+      if (hint) { hint.classList.toggle('is-hidden', !!id); }
+      if (!fromHash) { history.replaceState(null, '', id ? '#' + fig.id + '=' + id : '#' + fig.id); }
+      if (id && !fromHash) { reveal($('.scroll', fig), nodes.filter(function (x) { return x.classList.contains('is-on') || x.classList.contains('is-near'); })); }
+    }
+    function toggle(id) { select(fig.getAttribute('data-sel') === id ? null : id); }
+    nodes.forEach(function (n) {
+      n.addEventListener('click', function (ev) { ev.stopPropagation(); toggle(n.dataset.node); });
+      n.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(n.dataset.node); } });
+    });
+    chips.forEach(function (c) { c.addEventListener('click', function () { toggle(c.dataset.chip); }); });
+    $('svg', fig).addEventListener('click', function () { select(null); });
+    fig.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { select(null); } });
+    function fromHash() {
+      var m = location.hash.match(new RegExp('^#' + fig.id + '=([a-z]+)$'));
+      if (m && nodes.some(function (n) { return n.dataset.node === m[1]; })) { select(m[1], true); }
+      else if (!location.hash.match(new RegExp('^#' + fig.id + '='))) { select(null, true); }
+    }
+    window.addEventListener('hashchange', fromHash);
+    fromHash();
+  }
+
+  // ---------------------------------------------------------------- stepper (ask flow, index pipeline)
+  function stepper(fig) {
+    var steps = JSON.parse($('[data-steps]', fig).textContent);
+    var N = steps.length, n = 0, timer = null;
+    var nodes = $$('.node', fig), edges = $$('.edge', fig);
+    var cap = $('[data-caption]', fig), dotsBox = $('[data-dots]', fig);
+    var bPrev = $('[data-act=prev]', fig), bPlay = $('[data-act=play]', fig), bNext = $('[data-act=next]', fig), bReplay = $('[data-act=replay]', fig);
+    var dots = [];
+    for (var i = 1; i <= N; i++) {
+      (function (k) {
+        var d = document.createElement('button');
+        d.type = 'button'; d.className = 'dot'; d.textContent = String(k); d.setAttribute('aria-label', 'ขั้นที่ ' + k + ': ' + steps[k - 1].title);
+        d.addEventListener('click', function () { stop(); go(k); });
+        dotsBox.appendChild(d); dots.push(d);
+      })(i);
+    }
+    if (reduce) { bPlay.disabled = true; bPlay.title = 'ผู้ใช้ตั้งค่าลดการเคลื่อนไหว ใช้ปุ่มถัดไปแทน'; }
+
+    function render(keepHash) {
+      var cur = n > 0 ? steps[n - 1] : null;
+      edges.forEach(function (e) {
+        var s = +e.dataset.step;
+        e.classList.toggle('is-active', n > 0 && s === n);
+        e.classList.toggle('future', n > 0 && s > n);
+      });
+      nodes.forEach(function (nd) {
+        var first = +nd.dataset.first;
+        nd.classList.toggle('future', n > 0 && first > n);
+        nd.classList.toggle('is-active', !!cur && cur.nodes.indexOf(nd.dataset.node) >= 0);
+      });
+      fig.setAttribute('data-step', String(n));
+      if (cur && !keepHash) { reveal($('.scroll', fig), nodes.filter(function (x) { return x.classList.contains('is-active'); })); }
+      dots.forEach(function (d, i) { d.classList.toggle('is-done', n > 0 && i + 1 < n); if (i + 1 === n) { d.setAttribute('aria-current', 'step'); } else { d.removeAttribute('aria-current'); } });
+      bPrev.setAttribute('aria-disabled', String(n <= 0)); bNext.setAttribute('aria-disabled', String(n >= N));
+      if (cur) {
+        cap.innerHTML = '<div class="n">ขั้นที่ ' + n + ' จาก ' + N + '</div><h3></h3><p></p><code></code>';
+        $('h3', cap).textContent = cur.title; $('p', cap).textContent = cur.text; $('code', cap).textContent = cur.code;
+      } else {
+        cap.innerHTML = '<div class="n">ภาพรวม</div><h3>ภาพทั้งหมด</h3><p>กดเล่นหรือถัดไปเพื่อดูทีละขั้น</p>';
+      }
+      if (!keepHash) { history.replaceState(null, '', n > 0 ? '#' + fig.dataset.id + '-' + n : '#' + fig.dataset.id); }
+    }
+    function go(k) { n = Math.max(0, Math.min(N, k)); render(); }
+    function stop() { if (timer) { clearTimeout(timer); timer = null; } bPlay.setAttribute('aria-pressed', 'false'); bPlay.textContent = n >= N ? 'เล่นอีกครั้ง' : (n > 0 ? 'เล่นต่อ' : 'เล่น'); }
+    function tick() {
+      if (n >= N) { stop(); return; }
+      go(n + 1);
+      if (n >= N) { stop(); return; }
+      timer = setTimeout(tick, HOLD);
+    }
+    function play() {
+      if (reduce) { return; }
+      if (n >= N) { n = 0; }
+      bPlay.setAttribute('aria-pressed', 'true'); bPlay.textContent = 'หยุด';
+      tick();
+      if (n < N && !timer) { timer = setTimeout(tick, HOLD); }
+    }
+    bPlay.addEventListener('click', function () { if (timer) { stop(); } else { play(); } });
+    bNext.addEventListener('click', function () { if (bNext.getAttribute('aria-disabled') === 'true') { return; } stop(); go(n + 1); });
+    bPrev.addEventListener('click', function () { if (bPrev.getAttribute('aria-disabled') === 'true') { return; } stop(); go(n - 1); });
+    bReplay.addEventListener('click', function () { stop(); n = 0; render(); play(); });
+    fig.addEventListener('keydown', function (ev) {
+      if (ev.ctrlKey || ev.metaKey || ev.altKey) { return; }
+      var t = ev.target.tagName;
+      if (ev.key === 'ArrowRight') { ev.preventDefault(); stop(); go(n + 1); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); stop(); go(n - 1); }
+      else if (ev.key === 'Home') { ev.preventDefault(); stop(); go(0); }
+      else if (ev.key === 'End') { ev.preventDefault(); stop(); go(N); }
+      else if (ev.key === ' ' && t !== 'BUTTON') { ev.preventDefault(); if (timer) { stop(); } else { play(); } }
+    });
+    document.addEventListener('visibilitychange', function () { if (document.hidden && timer) { stop(); } });
+    function fromHash() {
+      var m = location.hash.match(new RegExp('^#' + fig.dataset.id + '-(\\d+)$'));
+      if (m && +m[1] >= 1 && +m[1] <= N) { stop(); n = +m[1]; render(true); }
+    }
+    window.addEventListener('hashchange', fromHash);
+    n = 0;
+    render(true);
+    fromHash();
+  }
+
+  try {
+    $$('[data-explorer]').forEach(explorer);
+    $$('[data-stepper]').forEach(stepper);
+    body.classList.remove('no-js'); body.classList.add('js');
+    if (!reduce) { body.classList.add('motion-ready'); }
+  } catch (err) {
+    body.classList.add('no-js');                       // a script error leaves the complete static page
+    if (window.console) { console.error(err); }
+  }
+}());
+</script>
+</body>
+</html>
