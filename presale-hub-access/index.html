@@ -104,8 +104,6 @@ input[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:var(--colo
 input[aria-invalid="true"]:focus-visible,textarea[aria-invalid="true"]:focus-visible{outline:2px solid var(--color-bad);outline-offset:3px;box-shadow:none}
 .field[data-bad] label{color:var(--color-bad)}
 .field[data-shake]{animation:nudge .35s var(--ease)}
-.summary{text-wrap:balance;color:var(--color-bad);font-weight:500;margin:0 0 var(--space-4);padding:var(--space-3) var(--space-4);border:1px solid var(--color-bad);border-radius:var(--r-code);background:var(--color-card)}
-.summary:focus-visible{outline:2px solid var(--color-bad);outline-offset:3px}
 /* token and install */
 .tokbox{border:1px solid var(--color-text);border-radius:var(--r-area);padding:var(--space-4) var(--space-5);background:var(--color-card)}
 .tokbox pre{margin:0 0 var(--space-3);font-weight:500}
@@ -190,7 +188,6 @@ html[lang="th"] .pass__name{font-size:2.3rem}
       <section id="form" class="sec" hidden>
         <p class="lead">ให้ AI ของคุณค้นและอ่านเอกสาร presale ได้ อ่านอย่างเดียว</p>
         <form id="f" novalidate>
-          <p class="summary" id="fsum" role="alert" tabindex="-1" hidden></p>
           <div class="pair">
             <div class="field"><label for="name">ชื่อ-นามสกุล</label><input id="name" name="name" autocomplete="name" maxlength="80" required aria-describedby="e-name"><p class="fmsg" id="e-name" hidden></p></div>
             <div class="field"><label for="contact">อีเมลหรือเบอร์โทร</label><input id="contact" name="contact" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="e-contact"><p class="fmsg" id="e-contact" hidden></p></div>
@@ -425,7 +422,7 @@ function goTo(id){
 }
 ORDER.forEach(function(id){
   $(id).addEventListener('blur',function(){if($(id).value||$(id).getAttribute('aria-invalid'))mark(id,check(id))});
-  $(id).addEventListener('input',function(){if($(id).getAttribute('aria-invalid')==='true'){var m=check(id);mark(id,m);if(!document.querySelector('[aria-invalid="true"]'))$('fsum').hidden=true}});
+  $(id).addEventListener('input',function(){if($(id).getAttribute('aria-invalid')==='true'){var m=check(id);mark(id,m)}});
 });
 
 function show(id){
@@ -484,12 +481,9 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
 
 $('f').addEventListener('submit',function(e){
   e.preventDefault();
-  var err=$('ferr'),sum=$('fsum');err.hidden=true;sum.hidden=true;
+  var err=$('ferr');err.hidden=true;
   var v=validate();
-  if(v.first){
-    sum.textContent=v.count===1?'มี 1 ช่องที่ต้องแก้ก่อนส่ง':'มี '+v.count+' ช่องที่ต้องแก้ก่อนส่ง';
-    sum.hidden=false;goTo(v.first);return;
-  }
+  if(v.first){goTo(v.first);return}
   var body={name:$('name').value.trim(),contact:$('contact').value.trim(),team:$('team').value.trim(),reason:$('reason').value.trim(),wanted:$('wanted').value.trim(),website:$('website').value};
   $('send').disabled=true;
   api('request',body).then(function(r){
