@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="ขอ token อ่านเอกสาร presale อ่านอย่างเดียว เจ้าของระบบอนุมัติทุกคำขอ">
+<meta name="description" content="ขอ token ให้ AI ค้นและอ่านเอกสาร presale แบบ read-only">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; connect-src https://amufmjwinorlkcycranq.supabase.co; img-src data:; base-uri 'none'; form-action 'none'">
-<title>ขอ token อ่านเอกสาร presale (อ่านอย่างเดียว)</title>
+<title>ขอ token อ่านเอกสาร presale (read-only)</title>
 <style>
 /* Hallmark · shape: Frame · genre: modern-minimal · theme: custom · job: sign up · idea: "a visitor pass that fills in while you ask for a read-only key" · vibe: "paper, black ink, one marker blue"
  * paper: oklch(0.98 0.005 85) · accent: oklch(0.46 0.2 265) · surface: absolute · display: Poppins · body: Poppins · hero: left-aligned headline over the form, the pass beside it · nav: none · footer: none · imagery: none · signature: the pass that is written while you type and stamped when approved
@@ -126,9 +126,11 @@ pre{margin:var(--space-2) 0;padding:var(--space-3) var(--space-4);background:var
 body:not([data-s="form"]) .pass__note{display:none}
 .pass__card::before{content:"";position:absolute;top:14px;left:50%;width:48px;height:12px;transform:translateX(-50%);border-radius:var(--r-pill);background:var(--color-bg);box-shadow:inset 0 1px 2px var(--color-shade)}
 .pass__title{font-size:var(--text-sm);color:var(--color-muted)}
-.pass__name,.pass__who{position:relative;overflow-wrap:anywhere;max-height:2.6em;overflow:hidden}
+.pass__name,.pass__who{position:relative;overflow-wrap:anywhere}
 .pass__name{font-family:var(--font-hand);font-size:2.5rem;line-height:1.05;margin-top:var(--space-2);min-height:1.1em}
 html[lang="th"] .pass__name{font-size:2.3rem}
+.pass__name[data-size="m"]{font-size:1.8rem}.pass__name[data-size="s"]{font-size:1.4rem}.pass__name[data-size="xs"]{font-size:1.15rem}
+.pass__who[data-size="m"]{font-size:.8125rem}.pass__who[data-size="s"]{font-size:.75rem}
 .pass__who{font-size:var(--text-sm);margin-top:var(--space-2);min-height:1.7em}
 .pass [data-empty]{color:var(--color-rule)}
 .pass__name::after,.pass__who::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:.45em;background:var(--marker-soft);border-radius:.3em .6em .3em .5em;transform:scaleX(0);transform-origin:left center;transition:transform .35s var(--ease);z-index:-1}
@@ -158,7 +160,7 @@ html[lang="th"] .pass__name{font-size:2.3rem}
 
 @media (max-width:860px){
   .stage{grid-template-columns:minmax(0,1fr);gap:var(--space-4)}
-  .pass{order:-1;width:min(100%,250px);margin:var(--space-8) auto var(--space-2)}
+  .pass{order:-1;width:min(100%,300px);margin:var(--space-8) auto var(--space-2)}
   .pass__rope{top:-70px;height:82px}
   body[data-s="form"] .pass{display:none}
 }
@@ -186,14 +188,14 @@ html[lang="th"] .pass__name{font-size:2.3rem}
       <noscript><p class="err">หน้านี้ต้องเปิด JavaScript เพื่อส่งคำขอ</p></noscript>
 
       <section id="form" class="sec" hidden>
-        <p class="lead">ให้ AI ของคุณค้นและอ่านเอกสาร presale ได้ อ่านอย่างเดียว</p>
+        <p class="lead">ให้ AI ของคุณค้นและอ่านเอกสาร presale ได้ แบบ read-only</p>
         <form id="f" novalidate>
           <div class="pair">
             <div class="field"><label for="name">ชื่อ-นามสกุล</label><input id="name" name="name" autocomplete="name" maxlength="80" required aria-describedby="e-name"><p class="fmsg" id="e-name" hidden></p></div>
             <div class="field"><label for="contact">อีเมลหรือเบอร์โทร</label><input id="contact" name="contact" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="e-contact"><p class="fmsg" id="e-contact" hidden></p></div>
           </div>
           <div class="field"><label for="reason">ใช้ทำอะไร</label><textarea id="reason" name="reason" rows="3" maxlength="500" required aria-describedby="e-reason"></textarea><p class="fmsg" id="e-reason" hidden></p></div>
-          <details class="more"><summary>ระบุทีมหรือข้อมูลที่อยากเห็น</summary>
+          <details class="more"><summary>เพิ่มทีมหรือโครงการที่อยากเห็น</summary>
             <div class="pair">
               <div class="field"><label for="team">ทีม หรือตำแหน่ง</label><input id="team" name="team" maxlength="80" aria-describedby="e-team"><p class="fmsg" id="e-team" hidden></p></div>
               <div class="field"><label for="wanted">ลูกค้า หรือโครงการ</label><input id="wanted" name="wanted" maxlength="300" aria-describedby="e-wanted"><p class="fmsg" id="e-wanted" hidden></p></div>
@@ -203,21 +205,21 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <p class="err" id="ferr" role="alert" hidden></p>
           <div class="actions">
             <button id="send" class="btn" type="submit">ส่งคำขอ</button>
-            <p class="note">ชื่อและช่องทางติดต่อใช้พิจารณาคำขอ และบันทึกไว้กับ token ที่อนุมัติ</p>
+            <p class="note">เก็บชื่อ ช่องทางติดต่อ และ IP พร้อมตำแหน่งโดยประมาณ ไว้พิจารณาคำขอและตรวจย้อนหลัง</p>
           </div>
         </form>
       </section>
 
       <section id="wait" class="sec" hidden aria-live="polite">
-        <p class="big">ส่งคำขอแล้ว รอเจ้าของระบบอนุมัติ</p>
-        <p>เปิดหน้านี้ค้างไว้ได้ หน้านี้จะเปลี่ยนเองเมื่ออนุมัติ หรือกลับมาเปิดลิงก์เดิม</p>
-        <p class="hand">ที่อยู่ของหน้านี้ตอนนี้คือกุญแจของคำขอ อย่าส่งต่อให้ใคร</p>
+        <p class="big">ส่งคำขอแล้ว รออนุมัติ</p>
+        <p>เปิดหน้านี้ค้างไว้ได้ พออนุมัติแล้วหน้าจะเปลี่ยนเอง หรือกลับมาเปิดลิงก์เดิมทีหลังก็ได้</p>
+        <p class="hand">ลิงก์ของหน้านี้คือกุญแจของคำขอ อย่าส่งต่อให้ใคร</p>
         <p class="muted small">คำขอหมดอายุใน 14 วัน</p>
       </section>
 
       <section id="approved" class="sec" hidden>
         <p class="big">อนุมัติแล้ว <span id="adays" class="muted"></span></p>
-        <p>กดรับ token เมื่อพร้อมติดตั้ง จะแสดงครั้งเดียว ถ้าหน้าปิดก่อนได้คัดลอก ต้องขอใหม่ รับได้ภายใน 7 วันหลังอนุมัติ</p>
+        <p>กดรับ token เมื่อพร้อมติดตั้ง token จะแสดงครั้งเดียว ถ้าปิดหน้าก่อนคัดลอกต้องขอใหม่ และต้องกดรับภายใน 7 วัน</p>
         <p class="err" id="cerr" role="alert" hidden></p>
         <button id="claim" class="btn" type="button">รับ token</button>
       </section>
@@ -228,27 +230,25 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <pre class="tok" id="tok"></pre>
           <button id="copytok" class="btn" type="button">คัดลอก token</button>
         </div>
-        <p class="hand">เก็บไว้เดี๋ยวนี้ หน้านี้ไม่แสดง token อีก ห้ามส่งต่อ ห้ามใส่ใน git หรือแชตกลุ่ม ถ้าหลุดให้แจ้งเจ้าของระบบเพื่อเพิกถอน</p>
+        <p class="hand">คัดลอกเก็บไว้ตอนนี้ หน้านี้จะไม่แสดง token อีก อย่าส่งต่อ อย่าใส่ใน git หรือแชตกลุ่ม ถ้าหลุดให้แจ้งผู้ดูแลเพื่อ revoke</p>
 
         <div class="steps">
           <h2>ติดตั้ง</h2>
           <details open><summary>Claude Code</summary>
             <p class="small muted">คำสั่งนี้เก็บ token ไว้ในไฟล์ตั้งค่าของ Claude Code บนเครื่องคุณ</p>
             <pre id="c-claude"></pre><button class="btn ghost" data-copy="c-claude" type="button">คัดลอกคำสั่ง</button></details>
-          <details><summary>Codex CLI</summary>
-            <p class="small muted">macOS และ Linux</p><pre id="c-codex-sh"></pre><button class="btn ghost" data-copy="c-codex-sh" type="button">คัดลอก</button>
-            <p class="small muted">Windows PowerShell</p><pre id="c-codex-ps"></pre><button class="btn ghost" data-copy="c-codex-ps" type="button">คัดลอก</button></details>
-          <details><summary>โปรแกรมอื่นที่ต่อ MCP แบบ HTTP ได้</summary>
-            <p class="small muted">ใส่ URL นี้ และ header นี้</p><pre id="c-http"></pre><button class="btn ghost" data-copy="c-http" type="button">คัดลอก</button></details>
-          <details><summary>Claude Desktop (ยังไม่ได้ทดสอบกับแอปจริง)</summary>
-            <p class="small">ต้องมี Node.js 18 ขึ้นไป 1) ดาวน์โหลดไฟล์ตัวกลางนี้เก็บไว้ที่ใดก็ได้ 2) เติมส่วนนี้ใน <code>claude_desktop_config.json</code> โดยแก้ path ให้ตรง 3) ปิดแล้วเปิดแอปใหม่</p>
-            <button class="btn ghost" id="dlbridge" type="button">ดาวน์โหลด presale-hub-bridge.mjs</button>
-            <pre id="c-desktop"></pre><button class="btn ghost" data-copy="c-desktop" type="button">คัดลอก</button></details>
-          <details><summary>ChatGPT</summary><p class="small">ยังต่อไม่ได้ ChatGPT รองรับ MCP แบบ OAuth หรือไม่มีการยืนยันตัวตนเท่านั้น ใช้ token แบบนี้ไม่ได้ ใช้ Claude หรือ Codex แทน</p></details>
+          <details><summary>Codex (CLI, IDE และแอป ChatGPT)</summary>
+            <p class="small muted">ทั้งสามตัวใช้ไฟล์ตั้งค่า Codex ไฟล์เดียวกัน ตั้งครั้งเดียวก็พอ ตัวแปร PRESALE_HUB_TOKEN ต้องมีอยู่ตอนเปิดโปรแกรม ตั้งแล้วให้เปิด Codex ใหม่</p>
+            <p class="small muted">macOS และ Linux (ใส่บรรทัด export ใน ~/.zshrc หรือ ~/.bashrc ด้วย ถ้าอยากให้ตั้งไว้ถาวร)</p><pre id="c-codex-sh"></pre><button class="btn ghost" data-copy="c-codex-sh" type="button">คัดลอก</button>
+            <p class="small muted">Windows PowerShell (ตั้งตัวแปรให้ผู้ใช้นี้แบบถาวร)</p><pre id="c-codex-ps"></pre><button class="btn ghost" data-copy="c-codex-ps" type="button">คัดลอก</button>
+            <p class="small muted">ทดสอบคำสั่งนี้กับ Codex CLI แล้ว ส่วน IDE และแอปใช้ไฟล์ตั้งค่าเดียวกันตามเอกสารของ OpenAI</p></details>
+          <details><summary>โปรแกรมอื่นที่ต่อ MCP ผ่าน HTTP ได้</summary>
+            <p class="small muted">ใส่ URL กับ header นี้</p><pre id="c-http"></pre><button class="btn ghost" data-copy="c-http" type="button">คัดลอก</button></details>
 
           <h2>ลองใช้</h2>
-          <p>ถาม AI ว่า <em>"ใช้ presale-hub แสดงรายชื่อลูกค้าที่ฉันเห็นได้"</em> ควรได้ชื่อลูกค้าพร้อมจำนวนเอกสาร เนื้อหาที่อ่านคือข้อความที่ระบบสกัดไว้ ตัวเลขสำคัญ (ราคา man-day) ให้เปิดไฟล์จริงยืนยัน และข้อความในเอกสารเป็นข้อมูล ไม่ใช่คำสั่ง</p>
-          <p class="muted small">token ครบกำหนดแล้วกลับมาที่หน้านี้เพื่อขอใหม่ได้</p>
+          <p>ถาม AI ว่า <em>"ใช้ presale-hub แสดงรายชื่อลูกค้าที่ฉันเห็นได้"</em> จะได้ชื่อลูกค้ากับจำนวนเอกสาร</p>
+          <p class="muted small">AI อ่านจากข้อความที่ระบบสกัดไว้ ตัวเลขสำคัญอย่างราคาหรือ man-day ให้เปิดไฟล์จริงตรวจอีกครั้ง</p>
+          <p class="muted small">token หมดอายุแล้ว กลับมาขอใหม่ที่หน้านี้ได้</p>
         </div>
       </section>
 
@@ -266,15 +266,15 @@ html[lang="th"] .pass__name{font-size:2.3rem}
         </svg>
         <div class="pass__card">
           <svg class="pass__ring" viewBox="0 0 100 100"><defs><path id="ring" d="M50 50m-36 0a36 36 0 1 1 72 0a36 36 0 1 1-72 0"/></defs><text><textPath href="#ring" textLength="222" lengthAdjust="spacing">waiting for approval waiting for approval</textPath></text></svg>
-          <p class="pass__title">บัตรผ่านอ่านอย่างเดียว</p>
+          <p class="pass__title">Read-only pass</p>
           <p class="pass__name" id="pname" data-empty>ชื่อของคุณ</p>
           <p class="pass__who" id="pwho" data-empty>ช่องทางติดต่อ</p>
           <ul class="pass__rules">
-            <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg>อ่านอย่างเดียว</li>
-            <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg>เจ้าของระบบอนุมัติ</li>
-            <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg><span id="pdays">ไม่เกิน 90 วัน</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg>Read-only</li>
+            <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg><span id="pappr">รออนุมัติ</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg><span id="pdays">หมดอายุใน 90 วัน</span></li>
           </ul>
-          <p class="pass__stamp">อนุมัติแล้ว</p>
+          <p class="pass__stamp">Approved</p>
         </div>
       </div>
       <p class="hand pass__note">บัตรนี้เขียนตามที่คุณพิมพ์ ยังไม่ส่งอะไรออกไป</p>
@@ -282,85 +282,6 @@ html[lang="th"] .pass__name{font-size:2.3rem}
   </div>
 </div>
 
-<script type="text/plain" id="bridge-src">#!/usr/bin/env node
-// presale-hub-bridge: stdio <-> streamable-HTTP bridge for MCP clients that cannot send an Authorization header
-// (Claude Desktop extensions, older editors). No dependencies; Node 18+.
-//   PRESALE_HUB_TOKEN  required  the reader token you were given (never printed, never written anywhere)
-//   PRESALE_HUB_URL    optional  defaults to the production hub
-// stdout carries ONLY MCP messages; anything for humans goes to stderr.
-"use strict";
-const URL_ = process.env.PRESALE_HUB_URL || "https://amufmjwinorlkcycranq.supabase.co/functions/v1/hub";
-const TOKEN = (process.env.PRESALE_HUB_TOKEN || "").trim();
-if (!TOKEN) {
-  console.error("presale-hub-bridge: PRESALE_HUB_TOKEN is not set");
-  process.exit(2);
-}
-if (!/^https:\/\//.test(URL_) && !/^http:\/\/(localhost|127\.0\.0\.1)[:/]/.test(URL_)) {
-  console.error("presale-hub-bridge: the URL must be https");
-  process.exit(2);
-}
-
-let session = null;
-let chain = Promise.resolve();
-
-function send(msg) {
-  process.stdout.write(JSON.stringify(msg) + "\n");
-}
-
-function fail(id, code, message) {
-  if (id !== undefined && id !== null) send({ jsonrpc: "2.0", id, error: { code, message } });
-}
-
-function messagesFrom(text, type) {
-  if (!text.trim()) return [];
-  if (type.includes("text/event-stream")) {
-    return text.split(/\r?\n\r?\n/).map((ev) => ev.split(/\r?\n/).filter((l) => l.startsWith("data:")).map((l) => l.slice(5).trim()).join("\n"))
-      .filter(Boolean).map((d) => JSON.parse(d));
-  }
-  const j = JSON.parse(text);
-  return Array.isArray(j) ? j : [j];
-}
-
-async function forward(line) {
-  let msg;
-  try { msg = JSON.parse(line); } catch { return fail(null, -32700, "parse error"); }
-  const id = msg.id;
-  try {
-    const res = await fetch(URL_, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        accept: "application/json, text/event-stream",
-        authorization: "Bearer " + TOKEN,
-        ...(session ? { "mcp-session-id": session } : {}),
-      },
-      body: line,
-      signal: AbortSignal.timeout(60000),
-    });
-    session = res.headers.get("mcp-session-id") || session;
-    if (res.status === 401) return fail(id, -32001, "the hub refused the token (wrong, expired or revoked)");
-    if (res.status === 429) return fail(id, -32002, "rate limit reached (60 calls per minute), wait a moment");
-    const text = await res.text();
-    if (!res.ok && !text.trim()) return fail(id, -32000, "hub answered HTTP " + res.status);
-    for (const m of messagesFrom(text, res.headers.get("content-type") || "")) send(m);
-  } catch (e) {
-    fail(id, -32000, "cannot reach the hub: " + (e && e.name === "TimeoutError" ? "timeout" : e && e.message ? e.message : "error"));
-  }
-}
-
-let buf = "";
-process.stdin.setEncoding("utf8");
-process.stdin.on("data", (chunk) => {
-  buf += chunk;
-  let i;
-  while ((i = buf.indexOf("\n")) >= 0) {
-    const line = buf.slice(0, i).trim();
-    buf = buf.slice(i + 1);
-    if (line) chain = chain.then(() => forward(line));
-  }
-});
-process.stdin.on("end", () => { chain.then(() => process.exit(0)); });
-</script>
 <script>
 (function(){
 'use strict';
@@ -371,18 +292,18 @@ var $=function(id){return document.getElementById(id)};
 var secret=null, timer=null, polls=0;
 
 var MSG={
-  invalid:'ระบบไม่รับข้อมูลที่ส่ง ตรวจทุกช่องอีกครั้ง (อีเมลหรือเบอร์โทรต้องเป็นรูปแบบที่ถูกต้อง)',
-  rate_limited:'ส่งคำขอบ่อยเกินไปจากเครื่องนี้ ลองใหม่ในอีก 1 ชั่วโมง',
-  too_many_pending:'ตอนนี้มีคำขอรอพิจารณาเต็ม ลองใหม่ภายหลัง หรือแจ้งเจ้าของระบบโดยตรง',
-  already_pending:'ช่องทางติดต่อนี้มีคำขอรออยู่แล้ว ใช้ลิงก์เดิมที่ได้ตอนส่งครั้งแรก หรือแจ้งเจ้าของระบบให้ปฏิเสธคำขอเดิม',
+  invalid:'ส่งไม่สำเร็จ ลองตรวจทุกช่องอีกครั้ง โดยเฉพาะอีเมลหรือเบอร์โทร',
+  rate_limited:'ส่งบ่อยเกินไป ลองใหม่อีกครั้งในอีก 1 ชั่วโมง',
+  too_many_pending:'ตอนนี้มีคำขอรออยู่เยอะเกินไป ลองใหม่ภายหลัง หรือติดต่อผู้ดูแลโดยตรง',
+  already_pending:'อีเมลหรือเบอร์นี้มีคำขอรออยู่แล้ว เปิดลิงก์เดิมที่ได้ตอนส่ง หรือติดต่อผู้ดูแลให้ปฏิเสธคำขอเดิมก่อน',
   network:'ติดต่อระบบไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่',
   failed:'ระบบขัดข้องชั่วคราว ลองใหม่อีกครั้ง'
 };
 
 var RULES={
   name:{max:80,req:'กรอกชื่อ-นามสกุลก่อน',min:2,short:'ชื่อสั้นเกินไป กรอกอย่างน้อย 2 ตัวอักษร'},
-  contact:{max:120,req:'กรอกอีเมลหรือเบอร์โทรที่ติดต่อได้',bad:'รูปแบบไม่ถูกต้อง ใส่อีเมลที่มี @ และชื่อโดเมน หรือเบอร์โทร 9 ถึง 15 หลัก'},
-  reason:{max:500,req:'บอกสั้นๆ ว่าจะใช้ทำอะไร',min:10,short:'เหตุผลสั้นเกินไป เขียนอย่างน้อย 10 ตัวอักษร ให้เจ้าของระบบตัดสินใจได้'},
+  contact:{max:120,req:'กรอกอีเมลหรือเบอร์โทรที่ติดต่อได้',bad:'รูปแบบไม่ถูกต้อง ใส่อีเมลให้ครบ (มี @ และโดเมน) หรือเบอร์โทร 9 ถึง 15 หลัก'},
+  reason:{max:500,req:'บอกสั้นๆ ว่าจะใช้ทำอะไร',min:10,short:'สั้นไปหน่อย เขียนอย่างน้อย 10 ตัวอักษรให้พอพิจารณาได้'},
   team:{max:80},wanted:{max:300}
 };
 var ORDER=['name','contact','reason','team','wanted'];
@@ -429,6 +350,7 @@ function show(id){
   ['form','wait','approved','done','end'].forEach(function(s){$(s).hidden=(s!==id)});
   document.body.setAttribute('data-s',id);
   $('pass').setAttribute('data-state',id);
+  $('pappr').textContent=(id==='approved'||id==='done')?'อนุมัติแล้ว':'รออนุมัติ';
   if(timer&&id!=='wait'){clearTimeout(timer);timer=null}
 }
 function api(route,body){
@@ -447,11 +369,11 @@ function forget(){secret=null;try{localStorage.removeItem(KEY)}catch(e){} histor
 function poll(){
   api('status',{secret:secret}).then(function(r){
     var j=r.j;
-    if(r.status===404){forget();return end('ลิงก์นี้ใช้ไม่ได้แล้ว (หมดอายุหรือไม่ถูกต้อง) ขอคำขอใหม่ได้')}
+    if(r.status===404){forget();return end('ลิงก์นี้ใช้ไม่ได้แล้ว อาจหมดอายุหรือไม่ถูกต้อง ลองขอใหม่ได้')}
     if(!j.ok){ if(r.status===0||r.status>=500){return again()} return end(MSG[j.error]||MSG.failed)}
     if(j.status==='pending'){show('wait');return again()}
-    if(j.status==='approved'){$('adays').textContent='('+j.days+' วัน)';$('pdays').textContent='ใช้ได้ '+j.days+' วัน';show('approved');return}
-    if(j.status==='denied'){return end('เจ้าของระบบไม่อนุมัติคำขอนี้ ถ้าคิดว่าผิดพลาด ติดต่อเจ้าของระบบโดยตรง')}
+    if(j.status==='approved'){$('adays').textContent='ใช้ได้ '+j.days+' วัน';$('pdays').textContent='หมดอายุใน '+j.days+' วัน';show('approved');return}
+    if(j.status==='denied'){return end('คำขอนี้ไม่ได้รับอนุมัติ ถ้าคิดว่าพลาด ติดต่อผู้ดูแลโดยตรง')}
     if(j.status==='claimed'){return end('รับ token ของคำขอนี้ไปแล้ว หน้านี้ไม่แสดง token ซ้ำ ถ้าทำหายหรือหมดอายุ ให้ขอใหม่')}
     if(j.status==='expired'){return end('คำขอหมดอายุแล้ว ขอใหม่ได้')}
     end(MSG.failed);
@@ -461,12 +383,17 @@ function again(){polls++;var d=polls<40?15000:60000;timer=setTimeout(poll,d)}
 function end(text){show('end');$('endmsg').textContent=text}
 
 // the pass mirrors what is typed, in this browser only: nothing is sent until the form is submitted
-function mirror(input,target,empty){
-  var upd=function(){var v=input.value.trim();target.textContent=v||empty;if(v)target.removeAttribute('data-empty');else target.setAttribute('data-empty','')};
+function sized(target,v,steps){
+  var n=Array.from(v).length,sz='';
+  for(var i=0;i<steps.length;i++){if(n>steps[i][0])sz=steps[i][1]}
+  if(sz)target.setAttribute('data-size',sz);else target.removeAttribute('data-size');
+}
+function mirror(input,target,empty,steps){
+  var upd=function(){var v=input.value.trim();target.textContent=v||empty;sized(target,v,steps);if(v)target.removeAttribute('data-empty');else target.setAttribute('data-empty','')};
   input.addEventListener('input',upd);upd();
 }
-mirror($('name'),$('pname'),'ชื่อของคุณ');
-mirror($('contact'),$('pwho'),'ช่องทางติดต่อ');
+mirror($('name'),$('pname'),'ชื่อของคุณ',[[10,'m'],[18,'s'],[32,'xs']]);
+mirror($('contact'),$('pwho'),'ช่องทางติดต่อ',[[22,'m'],[32,'s']]);
 [['name','name'],['contact','contact']].forEach(function(p){
   $(p[0]).addEventListener('focus',function(){$('pass').setAttribute('data-f',p[1])});
   $(p[0]).addEventListener('blur',function(){$('pass').removeAttribute('data-f')});
@@ -508,14 +435,13 @@ $('claim').addEventListener('click',function(){
 function done(j){
   var t=j.token, exp=j.expires_at?new Date(j.expires_at).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'}):'';
   $('tok').textContent=t;
-  $('dmeta').textContent='ชื่อ '+j.label+' ใช้ได้ถึง '+exp;
-  if(exp)$('pdays').textContent='ใช้ได้ถึง '+exp;
+  $('dmeta').textContent=j.label+' หมดอายุ '+exp;
+  if(exp)$('pdays').textContent='หมดอายุ '+exp;
   var H='Authorization: Bearer '+t;
   $('c-claude').textContent='claude mcp add --transport http presale-hub '+HUB+' --header "Authorization: Bearer '+t+'"';
   $('c-codex-sh').textContent="export PRESALE_HUB_TOKEN='"+t+"'\ncodex mcp add presale-hub --url "+HUB+" --bearer-token-env-var PRESALE_HUB_TOKEN";
-  $('c-codex-ps').textContent="$env:PRESALE_HUB_TOKEN='"+t+"'\ncodex mcp add presale-hub --url "+HUB+" --bearer-token-env-var PRESALE_HUB_TOKEN";
+  $('c-codex-ps').textContent="[Environment]::SetEnvironmentVariable('PRESALE_HUB_TOKEN','"+t+"','User')\ncodex mcp add presale-hub --url "+HUB+" --bearer-token-env-var PRESALE_HUB_TOKEN";
   $('c-http').textContent='URL:    '+HUB+'\nHeader: '+H+'\nAccept: application/json, text/event-stream';
-  $('c-desktop').textContent=JSON.stringify({mcpServers:{'presale-hub':{command:'node',args:['C:/path/to/presale-hub-bridge.mjs'],env:{PRESALE_HUB_TOKEN:t}}}},null,2);
   try{localStorage.removeItem(KEY)}catch(e){}
   show('done');
   $('tok').scrollIntoView({block:'center'});
@@ -528,10 +454,6 @@ function copy(text,btn){
 }
 $('copytok').addEventListener('click',function(){copy($('tok').textContent,$('copytok'))});
 Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){b.addEventListener('click',function(){copy($(b.getAttribute('data-copy')).textContent,b)})});
-$('dlbridge').addEventListener('click',function(){
-  var blob=new Blob([$('bridge-src').textContent],{type:'text/javascript'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='presale-hub-bridge.mjs';document.body.appendChild(a);a.click();a.remove();
-});
 $('again').addEventListener('click',function(){forget();polls=0;show('form');$('name').focus()});
 
 var s0=readSecret();

@@ -1,8 +1,8 @@
 {
-  "title": "ขอ token อ่านเอกสาร presale (อ่านอย่างเดียว)",
+  "title": "ขอ token อ่านเอกสาร presale",
   "slug": "presale-hub-access",
   "created": "2026-11-15",
   "kind": "form",
-  "note": "หน้าขอ token ของ reader MCP: ตรวจข้อมูลทีละช่อง พาไปช่องแรกที่ผิด แล้วรอรับ token",
+  "note": "",
   "public_url": "https://ppungpong4200.github.io/artifacts/presale-hub-access/"
 }
