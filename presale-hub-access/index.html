@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://amufmjwinorlkcycranq.supabase.co; img-src data:; base-uri 'none'; form-action 'none'">
+<title>ขอ token อ่านเอกสาร presale (อ่านอย่างเดียว)</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1c1c1a;--mut:#5f5f5a;--line:#d8d8d2;--card:#fff;--acc:#1f5f4a;--accfg:#fff;--bad:#a12626;--code:#f0f0ec}
+@media (prefers-color-scheme:dark){:root{--bg:#161614;--fg:#ececE6;--mut:#a3a39b;--line:#3a3a35;--card:#1e1e1b;--acc:#5fb59a;--accfg:#0e1f19;--bad:#ff8a8a;--code:#262622}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 'Leelawadee UI','Noto Sans Thai','Segoe UI',system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:28px 18px 64px}
+h1{font-size:1.4rem;margin:0 0 6px}h2{font-size:1.1rem;margin:26px 0 8px}
+p{margin:8px 0}.mut{color:var(--mut)}.small{font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:16px}
+label{display:block;font-weight:600;margin:14px 0 4px}label span{font-weight:400;color:var(--mut)}
+input,textarea{width:100%;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:9px 10px}
+input:focus,textarea:focus,button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+textarea{min-height:84px;resize:vertical}
+button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--acc);background:var(--acc);color:var(--accfg);padding:9px 16px;font-weight:600}
+button.ghost{background:transparent;color:var(--acc)}button:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.err{color:var(--bad);margin-top:12px;font-weight:600}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+pre{background:var(--code);border:1px solid var(--line);border-radius:7px;padding:10px;overflow:auto;white-space:pre-wrap;word-break:break-all;font:13px/1.5 Consolas,'Cascadia Mono',monospace;margin:6px 0}
+.tok{font-size:15px;font-weight:700}
+.warn{border-left:4px solid var(--bad);padding:6px 12px;margin:14px 0;background:var(--card)}
+details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:10px 0;background:var(--card)}summary{cursor:pointer;font-weight:600}
+[hidden]{display:none!important}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--acc);margin-right:8px;animation:p 1.4s infinite}
+@keyframes p{50%{opacity:.25}}@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>ขอ token อ่านเอกสาร presale</h1>
+<p class="mut">ให้ AI ของคุณ (Claude, Codex ฯลฯ) ค้นหาและอ่านเอกสาร presale ของ iPassion ได้ <strong>อ่านอย่างเดียว</strong> แก้ไขหรือสั่งงานระบบไม่ได้ เจ้าของระบบต้องอนุมัติก่อน และ token อยู่ได้ไม่เกิน 90 วัน</p>
+
+<section id="form" class="card" hidden>
+  <form id="f" novalidate>
+    <label for="name">ชื่อ-นามสกุล</label>
+    <input id="name" name="name" autocomplete="name" maxlength="80" required>
+    <label for="contact">อีเมลหรือช่องทางติดต่อ <span>(เจ้าของระบบจะใช้ยืนยันว่าคุณคือใคร)</span></label>
+    <input id="contact" name="contact" autocomplete="email" maxlength="120" required>
+    <label for="team">ทีม/ตำแหน่ง <span>(ไม่บังคับ)</span></label>
+    <input id="team" name="team" maxlength="80">
+    <label for="reason">ใช้ทำอะไร</label>
+    <textarea id="reason" name="reason" maxlength="500" required></textarea>
+    <label for="wanted">อยากเห็นข้อมูลลูกค้า/โครงการไหน <span>(ไม่บังคับ เป็นข้อมูลประกอบ)</span></label>
+    <input id="wanted" name="wanted" maxlength="300">
+    <div class="hp" aria-hidden="true"><label for="website">เว็บไซต์ (ห้ามกรอก)</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+    <p class="err" id="ferr" role="alert" hidden></p>
+    <div class="row"><button id="send" type="submit">ส่งคำขอ</button></div>
+    <p class="mut small">ข้อมูลนี้ส่งให้เจ้าของระบบคนเดียว เก็บเท่าที่ใช้พิจารณาและบันทึกว่าใครถือ token (คำขอที่ไม่อนุมัติหรือหมดอายุจะถูกลบใน 90 วัน)</p>
+  </form>
+</section>
+
+<section id="wait" class="card" hidden aria-live="polite">
+  <p><span class="dot"></span><strong>ส่งคำขอแล้ว รอเจ้าของระบบอนุมัติ</strong></p>
+  <p>เปิดหน้านี้ค้างไว้ได้ หน้านี้จะเปลี่ยนเองเมื่ออนุมัติ หรือกลับมาเปิดลิงก์เดิม (ที่อยู่ของหน้านี้ตอนนี้ คือกุญแจของคุณ <strong>อย่าส่งต่อให้ใคร</strong>)</p>
+  <p class="mut small">คำขอหมดอายุใน 14 วัน</p>
+</section>
+
+<section id="approved" class="card" hidden>
+  <p><strong>อนุมัติแล้ว</strong> <span id="adays"></span></p>
+  <p>กดรับ token เมื่อพร้อมติดตั้ง <strong>จะแสดงครั้งเดียว</strong> ถ้ากดแล้วหน้าปิดก่อนได้คัดลอก ต้องขอใหม่ รับได้ภายใน 7 วันหลังอนุมัติ</p>
+  <p class="err" id="cerr" role="alert" hidden></p>
+  <div class="row"><button id="claim" type="button">รับ token</button></div>
+</section>
+
+<section id="done" class="card" hidden>
+  <p><strong>token ของคุณ</strong> <span class="mut" id="dmeta"></span></p>
+  <pre class="tok" id="tok"></pre>
+  <div class="row"><button id="copytok" type="button">คัดลอก token</button></div>
+  <div class="warn"><strong>เก็บไว้เดี๋ยวนี้:</strong> หน้านี้จะไม่แสดง token อีก ห้ามส่งต่อ ห้ามใส่ใน git หรือแชตกลุ่ม ถ้าหลุดให้แจ้งเจ้าของระบบเพื่อเพิกถอน</div>
+
+  <h2>ติดตั้ง (เลือกโปรแกรมที่ใช้)</h2>
+  <details open><summary>Claude Code</summary>
+    <p class="small mut">คำสั่งนี้เก็บ token ไว้ในไฟล์ตั้งค่าของ Claude Code บนเครื่องคุณ</p>
+    <pre id="c-claude"></pre><button class="ghost" data-copy="c-claude" type="button">คัดลอกคำสั่ง</button></details>
+  <details><summary>Codex CLI</summary>
+    <p class="small mut">macOS/Linux:</p><pre id="c-codex-sh"></pre><button class="ghost" data-copy="c-codex-sh" type="button">คัดลอก</button>
+    <p class="small mut">Windows PowerShell:</p><pre id="c-codex-ps"></pre><button class="ghost" data-copy="c-codex-ps" type="button">คัดลอก</button></details>
+  <details><summary>โปรแกรมอื่นที่ต่อ MCP แบบ HTTP ได้</summary>
+    <p class="small mut">ใส่ URL นี้ และ header นี้:</p><pre id="c-http"></pre><button class="ghost" data-copy="c-http" type="button">คัดลอก</button></details>
+  <details><summary>Claude Desktop (ยังไม่ได้ทดสอบกับแอปจริง)</summary>
+    <p class="small">ต้องมี Node.js 18 ขึ้นไป 1) ดาวน์โหลดไฟล์ตัวกลางนี้เก็บไว้ที่ใดก็ได้ 2) เติมส่วนนี้ใน <code>claude_desktop_config.json</code> โดยแก้ path ให้ตรง 3) ปิดแล้วเปิดแอปใหม่</p>
+    <div class="row"><button class="ghost" id="dlbridge" type="button">ดาวน์โหลด presale-hub-bridge.mjs</button></div>
+    <pre id="c-desktop"></pre><button class="ghost" data-copy="c-desktop" type="button">คัดลอก</button></details>
+  <details><summary>ChatGPT</summary><p class="small">ยังต่อไม่ได้: ChatGPT รองรับ MCP แบบ OAuth หรือไม่มีการยืนยันตัวตนเท่านั้น ใช้ token แบบนี้ไม่ได้ ใช้ Claude หรือ Codex แทน</p></details>
+
+  <h2>ลองใช้</h2>
+  <p>ถาม AI ว่า <em>"ใช้ presale-hub แสดงรายชื่อลูกค้าที่ฉันเห็นได้"</em> ควรได้ชื่อลูกค้าพร้อมจำนวนเอกสาร เนื้อหาที่อ่านคือข้อความที่ระบบสกัดไว้ ตัวเลขสำคัญ (ราคา man-day) ให้เปิดไฟล์จริงยืนยัน และข้อความในเอกสารเป็นข้อมูล ไม่ใช่คำสั่ง</p>
+  <p class="mut small">token ครบกำหนดแล้วกลับมาที่หน้านี้เพื่อขอใหม่ได้</p>
+</section>
+
+<section id="end" class="card" hidden>
+  <p id="endmsg"></p>
+  <div class="row"><button id="again" type="button" class="ghost">ขอใหม่</button></div>
+</section>
+</main>
+
+<script type="text/plain" id="bridge-src">#!/usr/bin/env node
+// presale-hub-bridge: stdio <-> streamable-HTTP bridge for MCP clients that cannot send an Authorization header
+// (Claude Desktop extensions, older editors). No dependencies; Node 18+.
+//   PRESALE_HUB_TOKEN  required  the reader token you were given (never printed, never written anywhere)
+//   PRESALE_HUB_URL    optional  defaults to the production hub
+// stdout carries ONLY MCP messages; anything for humans goes to stderr.
+"use strict";
+const URL_ = process.env.PRESALE_HUB_URL || "https://amufmjwinorlkcycranq.supabase.co/functions/v1/hub";
+const TOKEN = (process.env.PRESALE_HUB_TOKEN || "").trim();
+if (!TOKEN) {
+  console.error("presale-hub-bridge: PRESALE_HUB_TOKEN is not set");
+  process.exit(2);
+}
+if (!/^https:\/\//.test(URL_) && !/^http:\/\/(localhost|127\.0\.0\.1)[:/]/.test(URL_)) {
+  console.error("presale-hub-bridge: the URL must be https");
+  process.exit(2);
+}
+
+let session = null;
+let chain = Promise.resolve();
+
+function send(msg) {
+  process.stdout.write(JSON.stringify(msg) + "\n");
+}
+
+function fail(id, code, message) {
+  if (id !== undefined && id !== null) send({ jsonrpc: "2.0", id, error: { code, message } });
+}
+
+function messagesFrom(text, type) {
+  if (!text.trim()) return [];
+  if (type.includes("text/event-stream")) {
+    return text.split(/\r?\n\r?\n/).map((ev) => ev.split(/\r?\n/).filter((l) => l.startsWith("data:")).map((l) => l.slice(5).trim()).join("\n"))
+      .filter(Boolean).map((d) => JSON.parse(d));
+  }
+  const j = JSON.parse(text);
+  return Array.isArray(j) ? j : [j];
+}
+
+async function forward(line) {
+  let msg;
+  try { msg = JSON.parse(line); } catch { return fail(null, -32700, "parse error"); }
+  const id = msg.id;
+  try {
+    const res = await fetch(URL_, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json, text/event-stream",
+        authorization: "Bearer " + TOKEN,
+        ...(session ? { "mcp-session-id": session } : {}),
+      },
+      body: line,
+      signal: AbortSignal.timeout(60000),
+    });
+    session = res.headers.get("mcp-session-id") || session;
+    if (res.status === 401) return fail(id, -32001, "the hub refused the token (wrong, expired or revoked)");
+    if (res.status === 429) return fail(id, -32002, "rate limit reached (60 calls per minute), wait a moment");
+    const text = await res.text();
+    if (!res.ok && !text.trim()) return fail(id, -32000, "hub answered HTTP " + res.status);
+    for (const m of messagesFrom(text, res.headers.get("content-type") || "")) send(m);
+  } catch (e) {
+    fail(id, -32000, "cannot reach the hub: " + (e && e.name === "TimeoutError" ? "timeout" : e && e.message ? e.message : "error"));
+  }
+}
+
+let buf = "";
+process.stdin.setEncoding("utf8");
+process.stdin.on("data", (chunk) => {
+  buf += chunk;
+  let i;
+  while ((i = buf.indexOf("\n")) >= 0) {
+    const line = buf.slice(0, i).trim();
+    buf = buf.slice(i + 1);
+    if (line) chain = chain.then(() => forward(line));
+  }
+});
+process.stdin.on("end", () => { chain.then(() => process.exit(0)); });
+</script>
+<script>
+(function(){
+'use strict';
+var API='https://amufmjwinorlkcycranq.supabase.co/functions/v1/hub/access/';
+var HUB='https://amufmjwinorlkcycranq.supabase.co/functions/v1/hub';
+var KEY='presale_access_secret';
+var $=function(id){return document.getElementById(id)};
+var secret=null, timer=null, polls=0;
+
+var MSG={
+  invalid:'กรอกข้อมูลไม่ครบหรือยาวเกินไป ตรวจชื่อ ช่องทางติดต่อ และเหตุผล',
+  rate_limited:'ส่งคำขอบ่อยเกินไปจากเครื่องนี้ ลองใหม่ในอีก 1 ชั่วโมง',
+  too_many_pending:'ตอนนี้มีคำขอรอพิจารณาเต็ม ลองใหม่ภายหลัง หรือแจ้งเจ้าของระบบโดยตรง',
+  already_pending:'ช่องทางติดต่อนี้มีคำขอรออยู่แล้ว ใช้ลิงก์เดิมที่ได้ตอนส่งครั้งแรก หรือแจ้งเจ้าของระบบให้ปฏิเสธคำขอเดิม',
+  network:'ติดต่อระบบไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่',
+  failed:'ระบบขัดข้องชั่วคราว ลองใหม่อีกครั้ง'
+};
+
+function show(id){['form','wait','approved','done','end'].forEach(function(s){$(s).hidden=(s!==id)}); if(timer&&id!=='wait'){clearTimeout(timer);timer=null}}
+function api(route,body){
+  return fetch(API+route,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),cache:'no-store',referrerPolicy:'no-referrer'})
+    .then(function(r){return r.json().catch(function(){return null}).then(function(j){return {status:r.status,j:j||{}}})})
+    .catch(function(){return {status:0,j:{ok:false,error:'network'}}});
+}
+function readSecret(){
+  var m=/^#r=([A-Za-z0-9_-]{43})$/.exec(location.hash);
+  if(m)return m[1];
+  try{var s=localStorage.getItem(KEY);return s&&/^[A-Za-z0-9_-]{43}$/.test(s)?s:null}catch(e){return null}
+}
+function keep(s){secret=s;try{localStorage.setItem(KEY,s)}catch(e){} history.replaceState(null,'','#r='+s)}
+function forget(){secret=null;try{localStorage.removeItem(KEY)}catch(e){} history.replaceState(null,'',location.pathname+location.search)}
+
+function poll(){
+  api('status',{secret:secret}).then(function(r){
+    var j=r.j;
+    if(r.status===404){forget();return end('ลิงก์นี้ใช้ไม่ได้แล้ว (หมดอายุหรือไม่ถูกต้อง) ขอคำขอใหม่ได้')}
+    if(!j.ok){ if(r.status===0||r.status>=500){return again()} return end(MSG[j.error]||MSG.failed)}
+    if(j.status==='pending'){show('wait');return again()}
+    if(j.status==='approved'){$('adays').textContent='('+j.days+' วัน)';show('approved');return}
+    if(j.status==='denied'){return end('เจ้าของระบบไม่อนุมัติคำขอนี้ ถ้าคิดว่าผิดพลาด ติดต่อเจ้าของระบบโดยตรง')}
+    if(j.status==='claimed'){return end('รับ token ของคำขอนี้ไปแล้ว หน้านี้ไม่แสดง token ซ้ำ ถ้าทำหายหรือหมดอายุ ให้ขอใหม่')}
+    if(j.status==='expired'){return end('คำขอหมดอายุแล้ว ขอใหม่ได้')}
+    end(MSG.failed);
+  });
+}
+function again(){polls++;var d=polls<40?15000:60000;timer=setTimeout(poll,d)}
+function end(text){show('end');$('endmsg').textContent=text}
+
+$('f').addEventListener('submit',function(e){
+  e.preventDefault();
+  var err=$('ferr');err.hidden=true;
+  var body={name:$('name').value,contact:$('contact').value,team:$('team').value,reason:$('reason').value,wanted:$('wanted').value,website:$('website').value};
+  if(!body.name.trim()||body.contact.trim().length<3||body.reason.trim().length<3){err.textContent=MSG.invalid;err.hidden=false;return}
+  $('send').disabled=true;
+  api('request',body).then(function(r){
+    $('send').disabled=false;
+    if(r.j.ok&&r.j.secret){keep(r.j.secret);polls=0;show('wait');again();return}
+    err.textContent=MSG[r.j.error]||MSG.failed;err.hidden=false;
+  });
+});
+
+$('claim').addEventListener('click',function(){
+  var b=$('claim'),err=$('cerr');err.hidden=true;b.disabled=true;
+  api('claim',{secret:secret}).then(function(r){
+    var j=r.j;
+    if(j.ok&&j.token){return done(j)}
+    b.disabled=false;
+    var m={pending:'ยังไม่อนุมัติ',denied:'ไม่อนุมัติ',expired:'หมดอายุแล้ว ขอใหม่ได้',already_claimed:'รับ token ไปแล้ว'}[j.error];
+    err.textContent=m||MSG[j.error]||MSG.failed;err.hidden=false;
+    if(j.error==='expired'||j.error==='already_claimed')poll();
+  });
+});
+
+function done(j){
+  var t=j.token, exp=j.expires_at?new Date(j.expires_at).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'}):'';
+  $('tok').textContent=t;
+  $('dmeta').textContent='ชื่อ '+j.label+' · ใช้ได้ถึง '+exp;
+  var H='Authorization: Bearer '+t;
+  $('c-claude').textContent='claude mcp add --transport http presale-hub '+HUB+' --header "Authorization: Bearer '+t+'"';
+  $('c-codex-sh').textContent="export PRESALE_HUB_TOKEN='"+t+"'\ncodex mcp add presale-hub --url "+HUB+" --bearer-token-env-var PRESALE_HUB_TOKEN";
+  $('c-codex-ps').textContent="$env:PRESALE_HUB_TOKEN='"+t+"'\ncodex mcp add presale-hub --url "+HUB+" --bearer-token-env-var PRESALE_HUB_TOKEN";
+  $('c-http').textContent='URL:    '+HUB+'\nHeader: '+H+'\nAccept: application/json, text/event-stream';
+  $('c-desktop').textContent=JSON.stringify({mcpServers:{'presale-hub':{command:'node',args:['C:/path/to/presale-hub-bridge.mjs'],env:{PRESALE_HUB_TOKEN:t}}}},null,2);
+  try{localStorage.removeItem(KEY)}catch(e){}
+  show('done');
+  $('tok').scrollIntoView({block:'center'});
+}
+
+function copy(text,btn){
+  var ok=function(){var o=btn.textContent;btn.textContent='คัดลอกแล้ว';setTimeout(function(){btn.textContent=o},1500)};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,function(){fallback()})}else fallback();
+  function fallback(){var r=document.createRange();var n=btn.previousElementSibling;if(n&&n.tagName==='PRE'){r.selectNodeContents(n);var s=getSelection();s.removeAllRanges();s.addRange(r)}}
+}
+$('copytok').addEventListener('click',function(){copy($('tok').textContent,$('copytok'))});
+Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){b.addEventListener('click',function(){copy($(b.getAttribute('data-copy')).textContent,b)})});
+$('dlbridge').addEventListener('click',function(){
+  var blob=new Blob([$('bridge-src').textContent],{type:'text/javascript'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='presale-hub-bridge.mjs';document.body.appendChild(a);a.click();a.remove();
+});
+$('again').addEventListener('click',function(){forget();polls=0;show('form');$('name').focus()});
+
+var s0=readSecret();
+if(s0){secret=s0;keep(s0);show('wait');poll()}else show('form');
+})();
+</script>
+</body>
+</html>
