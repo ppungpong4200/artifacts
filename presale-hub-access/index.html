@@ -68,6 +68,7 @@ body:not([data-s="form"]) .sec{margin-top:var(--space-6)}
 .muted{color:var(--color-muted)}.small{font-size:var(--text-sm)}
 .hand{font-family:var(--font-hand);font-size:1.5rem;line-height:1.35;color:var(--marker)}
 html[lang="th"] .hand{font-size:1.3rem}
+.hl{background:linear-gradient(transparent 30%,var(--marker-soft) 30%,var(--marker-soft) 94%,transparent 94%);padding:0 .22em;margin:0 -.1em;border-radius:.25em .5em .3em .55em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
 /* form: pill fields */
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
@@ -103,6 +104,7 @@ input:focus-visible,textarea:focus-visible{outline:none;box-shadow:0 0 0 4px var
 input[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:var(--color-bad);background:var(--color-card);box-shadow:0 0 0 3px var(--color-bad-soft)}
 input[aria-invalid="true"]:focus-visible,textarea[aria-invalid="true"]:focus-visible{outline:2px solid var(--color-bad);outline-offset:3px;box-shadow:none}
 .field[data-bad] label{color:var(--color-bad)}
+.opt{font-size:.85em;opacity:.7;margin-left:.35em}
 .field[data-shake]{animation:nudge .35s var(--ease)}
 /* token and install */
 .tokbox{border:1px solid var(--color-text);border-radius:var(--r-area);padding:var(--space-4) var(--space-5);background:var(--color-card)}
@@ -192,8 +194,9 @@ html[lang="th"] .pass__name{font-size:2.3rem}
         <form id="f" novalidate>
           <div class="pair">
             <div class="field"><label for="name">ชื่อ-นามสกุล</label><input id="name" name="name" autocomplete="name" maxlength="80" required aria-describedby="e-name"><p class="fmsg" id="e-name" hidden></p></div>
-            <div class="field"><label for="contact">อีเมลหรือเบอร์โทร</label><input id="contact" name="contact" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="e-contact"><p class="fmsg" id="e-contact" hidden></p></div>
+            <div class="field"><label for="contact">อีเมล</label><input id="contact" name="contact" type="email" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="e-contact"><p class="fmsg" id="e-contact" hidden></p></div>
           </div>
+          <div class="field"><label for="phone">เบอร์โทร <span class="opt">ไม่บังคับ</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="e-phone"><p class="fmsg" id="e-phone" hidden></p></div>
           <div class="field"><label for="reason">ใช้ทำอะไร</label><textarea id="reason" name="reason" rows="3" maxlength="500" required aria-describedby="e-reason"></textarea><p class="fmsg" id="e-reason" hidden></p></div>
           <details class="more"><summary>เพิ่มทีมหรือโครงการที่อยากเห็น</summary>
             <div class="pair">
@@ -205,14 +208,13 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <p class="err" id="ferr" role="alert" hidden></p>
           <div class="actions">
             <button id="send" class="btn" type="submit">ส่งคำขอ</button>
-            <p class="note">เก็บชื่อ ช่องทางติดต่อ และ IP พร้อมตำแหน่งโดยประมาณ ไว้พิจารณาคำขอและตรวจย้อนหลัง</p>
           </div>
         </form>
       </section>
 
       <section id="wait" class="sec" hidden aria-live="polite">
         <p class="big">ส่งคำขอแล้ว รออนุมัติ</p>
-        <p>เปิดหน้านี้ค้างไว้ได้ พออนุมัติแล้วหน้าจะเปลี่ยนเอง หรือกลับมาเปิดลิงก์เดิมทีหลังก็ได้</p>
+        <p>ปิดหน้านี้ได้เลย พออนุมัติแล้วเราจะส่งอีเมลพร้อมลิงก์ไปให้ จะเปิดค้างไว้ก็ได้ หน้านี้จะเปลี่ยนเอง</p>
         <p class="hand">ลิงก์ของหน้านี้คือกุญแจของคำขอ อย่าส่งต่อให้ใคร</p>
         <p class="muted small">คำขอหมดอายุใน 14 วัน</p>
       </section>
@@ -230,7 +232,7 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <pre class="tok" id="tok"></pre>
           <button id="copytok" class="btn" type="button">คัดลอก token</button>
         </div>
-        <p class="hand">คัดลอกเก็บไว้ตอนนี้ หน้านี้จะไม่แสดง token อีก อย่าส่งต่อ อย่าใส่ใน git หรือแชตกลุ่ม ถ้าหลุดให้แจ้งผู้ดูแลเพื่อ revoke</p>
+        <p class="hand">คัดลอกเก็บไว้ตอนนี้ หน้านี้จะไม่แสดง token อีก อย่าส่งต่อ อย่าใส่ใน git หรือแชตกลุ่ม <span class="hl">ถ้าหลุดให้แจ้งผู้ดูแลเพื่อ revoke</span></p>
 
         <div class="steps">
           <h2>ติดตั้ง</h2>
@@ -268,7 +270,7 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <svg class="pass__ring" viewBox="0 0 100 100"><defs><path id="ring" d="M50 50m-36 0a36 36 0 1 1 72 0a36 36 0 1 1-72 0"/></defs><text><textPath href="#ring" textLength="222" lengthAdjust="spacing">waiting for approval waiting for approval</textPath></text></svg>
           <p class="pass__title">Read-only pass</p>
           <p class="pass__name" id="pname" data-empty>ชื่อของคุณ</p>
-          <p class="pass__who" id="pwho" data-empty>ช่องทางติดต่อ</p>
+          <p class="pass__who" id="pwho" data-empty>อีเมลของคุณ</p>
           <ul class="pass__rules">
             <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg>Read-only</li>
             <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M3 11l4.5 4.5L17 5"/></svg><span id="pappr">รออนุมัติ</span></li>
@@ -277,7 +279,7 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <p class="pass__stamp">Approved</p>
         </div>
       </div>
-      <p class="hand pass__note">บัตรนี้เขียนตามที่คุณพิมพ์ ยังไม่ส่งอะไรออกไป</p>
+      <p class="hand pass__note">พิมพ์ลงไปแล้วบัตรจะเขียนตาม กดส่งเมื่อไหร่ถึงจะไปถึงเรา</p>
     </aside>
   </div>
 </div>
@@ -292,7 +294,7 @@ var $=function(id){return document.getElementById(id)};
 var secret=null, timer=null, polls=0;
 
 var MSG={
-  invalid:'ส่งไม่สำเร็จ ลองตรวจทุกช่องอีกครั้ง โดยเฉพาะอีเมลหรือเบอร์โทร',
+  invalid:'ส่งไม่สำเร็จ ลองตรวจทุกช่องอีกครั้ง โดยเฉพาะอีเมล',
   rate_limited:'ส่งบ่อยเกินไป ลองใหม่อีกครั้งในอีก 1 ชั่วโมง',
   too_many_pending:'ตอนนี้มีคำขอรออยู่เยอะเกินไป ลองใหม่ภายหลัง หรือติดต่อผู้ดูแลโดยตรง',
   already_pending:'อีเมลหรือเบอร์นี้มีคำขอรออยู่แล้ว เปิดลิงก์เดิมที่ได้ตอนส่ง หรือติดต่อผู้ดูแลให้ปฏิเสธคำขอเดิมก่อน',
@@ -302,24 +304,22 @@ var MSG={
 
 var RULES={
   name:{max:80,req:'กรอกชื่อ-นามสกุลก่อน',min:2,short:'ชื่อสั้นเกินไป กรอกอย่างน้อย 2 ตัวอักษร'},
-  contact:{max:120,req:'กรอกอีเมลหรือเบอร์โทรที่ติดต่อได้',bad:'รูปแบบไม่ถูกต้อง ใส่อีเมลให้ครบ (มี @ และโดเมน) หรือเบอร์โทร 9 ถึง 15 หลัก'},
+  contact:{max:120,req:'กรอกอีเมลก่อน',bad:'รูปแบบอีเมลไม่ถูกต้อง ตรวจว่ามี @ และโดเมนครบ (อย่างน้อย 1 อีเมล ไม่ต้องใส่หลายอัน)'},
+  phone:{max:30,bad:'เบอร์โทรต้องมี 9 ถึง 15 หลัก ใช้ตัวเลข เว้นวรรค หรือเครื่องหมาย + - ( ) ได้'},
   reason:{max:500,req:'บอกสั้นๆ ว่าจะใช้ทำอะไร',min:10,short:'สั้นไปหน่อย เขียนอย่างน้อย 10 ตัวอักษรให้พอพิจารณาได้'},
   team:{max:80},wanted:{max:300}
 };
-var ORDER=['name','contact','reason','team','wanted'];
-var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/;
-var HANDLE=/^@[A-Za-z0-9_-][A-Za-z0-9._-]{2,}$/;
-var DOMAINISH=/\.[A-Za-z]{2,}$/;
+var ORDER=['name','contact','phone','reason','team','wanted'];
+var EMAIL=/^[^\s@,;<>"]+@[^\s@,;<>"]+\.[^\s@.,;<>"]{2,}$/;
 function check(id){
   var r=RULES[id],v=$(id).value.trim(),len=Array.from(v).length;
   if(!v)return r.req||'';
   if(len>r.max)return 'ยาวเกินไป ไม่เกิน '+r.max+' ตัวอักษร (ตอนนี้ '+len+')';
   if(r.min&&len<r.min)return r.short;
-  if(id==='contact'){
-    if(EMAIL.test(v)||(HANDLE.test(v)&&!DOMAINISH.test(v)))return '';
+  if(id==='contact')return EMAIL.test(v)?'':r.bad;
+  if(id==='phone'){
     var digits=v.replace(/[^0-9]/g,'');
-    if(/^[+0-9()\s.-]+$/.test(v)&&digits.length>=9&&digits.length<=15)return '';
-    return r.bad;
+    return /^[+0-9()\s.-]+$/.test(v)&&digits.length>=9&&digits.length<=15?'':r.bad;
   }
   return '';
 }
@@ -393,7 +393,7 @@ function mirror(input,target,empty,steps){
   input.addEventListener('input',upd);upd();
 }
 mirror($('name'),$('pname'),'ชื่อของคุณ',[[10,'m'],[18,'s'],[32,'xs']]);
-mirror($('contact'),$('pwho'),'ช่องทางติดต่อ',[[22,'m'],[32,'s']]);
+mirror($('contact'),$('pwho'),'อีเมลของคุณ',[[22,'m'],[32,'s']]);
 [['name','name'],['contact','contact']].forEach(function(p){
   $(p[0]).addEventListener('focus',function(){$('pass').setAttribute('data-f',p[1])});
   $(p[0]).addEventListener('blur',function(){$('pass').removeAttribute('data-f')});
@@ -411,7 +411,7 @@ $('f').addEventListener('submit',function(e){
   var err=$('ferr');err.hidden=true;
   var v=validate();
   if(v.first){goTo(v.first);return}
-  var body={name:$('name').value.trim(),contact:$('contact').value.trim(),team:$('team').value.trim(),reason:$('reason').value.trim(),wanted:$('wanted').value.trim(),website:$('website').value};
+  var body={name:$('name').value.trim(),contact:$('contact').value.trim(),phone:$('phone').value.trim(),team:$('team').value.trim(),reason:$('reason').value.trim(),wanted:$('wanted').value.trim(),website:$('website').value};
   $('send').disabled=true;
   api('request',body).then(function(r){
     $('send').disabled=false;
