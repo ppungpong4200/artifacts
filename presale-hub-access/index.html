@@ -198,10 +198,10 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           </div>
           <div class="field"><label for="phone">เบอร์โทร <span class="opt">ไม่บังคับ</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="e-phone"><p class="fmsg" id="e-phone" hidden></p></div>
           <div class="field"><label for="reason">ใช้ทำอะไร</label><textarea id="reason" name="reason" rows="3" maxlength="500" required aria-describedby="e-reason"></textarea><p class="fmsg" id="e-reason" hidden></p></div>
-          <details class="more"><summary>เพิ่มทีมหรือโครงการที่อยากเห็น</summary>
+          <details class="more"><summary>บอกทีมหรือโปรเจกต์ที่อยากดูด้วยก็ได้</summary>
             <div class="pair">
               <div class="field"><label for="team">ทีม หรือตำแหน่ง</label><input id="team" name="team" maxlength="80" aria-describedby="e-team"><p class="fmsg" id="e-team" hidden></p></div>
-              <div class="field"><label for="wanted">ลูกค้า หรือโครงการ</label><input id="wanted" name="wanted" maxlength="300" aria-describedby="e-wanted"><p class="fmsg" id="e-wanted" hidden></p></div>
+              <div class="field"><label for="wanted">ลูกค้า หรือโปรเจกต์</label><input id="wanted" name="wanted" maxlength="300" aria-describedby="e-wanted"><p class="fmsg" id="e-wanted" hidden></p></div>
             </div>
           </details>
           <div class="hp" aria-hidden="true"><label for="website">เว็บไซต์ (ห้ามกรอก)</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
@@ -214,14 +214,14 @@ html[lang="th"] .pass__name{font-size:2.3rem}
 
       <section id="wait" class="sec" hidden aria-live="polite">
         <p class="big">ส่งคำขอแล้ว รออนุมัติ</p>
-        <p>ปิดหน้านี้ได้เลย พออนุมัติแล้วเราจะส่งอีเมลพร้อมลิงก์ไปให้ จะเปิดค้างไว้ก็ได้ หน้านี้จะเปลี่ยนเอง</p>
-        <p class="hand">ลิงก์ของหน้านี้คือกุญแจของคำขอ อย่าส่งต่อให้ใคร</p>
-        <p class="muted small">คำขอหมดอายุใน 14 วัน</p>
+        <p>ปิดหน้านี้ได้เลย พออนุมัติแล้วจะมีอีเมลส่งลิงก์ไปให้ จะเปิดค้างไว้ก็ได้ หน้านี้จะเปลี่ยนเอง</p>
+        <p class="hand">ลิงก์ของหน้านี้ใช้รับ token ได้ อย่าส่งต่อให้ใคร</p>
+        <p class="muted small">คำขอจะหมดอายุใน 14 วัน</p>
       </section>
 
       <section id="approved" class="sec" hidden>
         <p class="big">อนุมัติแล้ว <span id="adays" class="muted"></span></p>
-        <p>กดรับ token เมื่อพร้อมติดตั้ง token จะแสดงครั้งเดียว ถ้าปิดหน้าก่อนคัดลอกต้องขอใหม่ และต้องกดรับภายใน 7 วัน</p>
+        <p>กดรับ token ตอนพร้อมติดตั้ง token จะโชว์ครั้งเดียว ถ้าปิดหน้าก่อนคัดลอกต้องขอใหม่ และต้องรับภายใน 7 วัน</p>
         <p class="err" id="cerr" role="alert" hidden></p>
         <button id="claim" class="btn" type="button">รับ token</button>
       </section>
@@ -232,24 +232,24 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <pre class="tok" id="tok"></pre>
           <button id="copytok" class="btn" type="button">คัดลอก token</button>
         </div>
-        <p class="hand">คัดลอกเก็บไว้ตอนนี้ หน้านี้จะไม่แสดง token อีก อย่าส่งต่อ อย่าใส่ใน git หรือแชตกลุ่ม <span class="hl">ถ้าหลุดให้แจ้งผู้ดูแลเพื่อ revoke</span></p>
+        <p class="hand">คัดลอกเก็บไว้ตอนนี้เลย หน้านี้จะไม่โชว์ token อีก อย่าส่งต่อ อย่าใส่ใน git หรือแชตกลุ่ม <span class="hl">ถ้าหลุดให้รีบแจ้งผู้ดูแลเพื่อ revoke</span></p>
 
         <div class="steps">
           <h2>ติดตั้ง</h2>
           <details open><summary>Claude Code</summary>
-            <p class="small muted">คำสั่งนี้เก็บ token ไว้ในไฟล์ตั้งค่าของ Claude Code บนเครื่องคุณ</p>
+            <p class="small muted">คำสั่งนี้จะเก็บ token ไว้ใน config ของ Claude Code บนเครื่องคุณ</p>
             <pre id="c-claude"></pre><button class="btn ghost" data-copy="c-claude" type="button">คัดลอกคำสั่ง</button></details>
           <details><summary>Codex (CLI, IDE และแอป ChatGPT)</summary>
-            <p class="small muted">ทั้งสามตัวใช้ไฟล์ตั้งค่า Codex ไฟล์เดียวกัน ตั้งครั้งเดียวก็พอ ตัวแปร PRESALE_HUB_TOKEN ต้องมีอยู่ตอนเปิดโปรแกรม ตั้งแล้วให้เปิด Codex ใหม่</p>
-            <p class="small muted">macOS และ Linux (ใส่บรรทัด export ใน ~/.zshrc หรือ ~/.bashrc ด้วย ถ้าอยากให้ตั้งไว้ถาวร)</p><pre id="c-codex-sh"></pre><button class="btn ghost" data-copy="c-codex-sh" type="button">คัดลอก</button>
-            <p class="small muted">Windows PowerShell (ตั้งตัวแปรให้ผู้ใช้นี้แบบถาวร)</p><pre id="c-codex-ps"></pre><button class="btn ghost" data-copy="c-codex-ps" type="button">คัดลอก</button>
-            <p class="small muted">ทดสอบคำสั่งนี้กับ Codex CLI แล้ว ส่วน IDE และแอปใช้ไฟล์ตั้งค่าเดียวกันตามเอกสารของ OpenAI</p></details>
-          <details><summary>โปรแกรมอื่นที่ต่อ MCP ผ่าน HTTP ได้</summary>
+            <p class="small muted">ทั้งสามตัวใช้ config ของ Codex ไฟล์เดียวกัน ตั้งครั้งเดียวพอ ตัวแปร PRESALE_HUB_TOKEN ต้องมีก่อนเปิดโปรแกรม ตั้งเสร็จให้เปิด Codex ใหม่</p>
+            <p class="small muted">macOS และ Linux (ถ้าอยากให้ถาวร ใส่บรรทัด export ไว้ใน ~/.zshrc หรือ ~/.bashrc ด้วย)</p><pre id="c-codex-sh"></pre><button class="btn ghost" data-copy="c-codex-sh" type="button">คัดลอก</button>
+            <p class="small muted">Windows PowerShell (ตั้งตัวแปรถาวรให้ user นี้)</p><pre id="c-codex-ps"></pre><button class="btn ghost" data-copy="c-codex-ps" type="button">คัดลอก</button>
+            <p class="small muted">ลองคำสั่งนี้กับ Codex CLI แล้ว ส่วน IDE กับแอปใช้ config ไฟล์เดียวกันตามที่ OpenAI เขียนไว้</p></details>
+          <details><summary>โปรแกรมอื่นที่รองรับ MCP แบบ HTTP</summary>
             <p class="small muted">ใส่ URL กับ header นี้</p><pre id="c-http"></pre><button class="btn ghost" data-copy="c-http" type="button">คัดลอก</button></details>
 
           <h2>ลองใช้</h2>
           <p>ถาม AI ว่า <em>"ใช้ presale-hub แสดงรายชื่อลูกค้าที่ฉันเห็นได้"</em> จะได้ชื่อลูกค้ากับจำนวนเอกสาร</p>
-          <p class="muted small">AI อ่านจากข้อความที่ระบบสกัดไว้ ตัวเลขสำคัญอย่างราคาหรือ man-day ให้เปิดไฟล์จริงตรวจอีกครั้ง</p>
+          <p class="muted small">AI อ่านจากข้อความที่ extract ไว้ ถ้าเป็นตัวเลขสำคัญอย่างราคาหรือ man-day ให้เปิดไฟล์จริงเช็กอีกที</p>
           <p class="muted small">token หมดอายุแล้ว กลับมาขอใหม่ที่หน้านี้ได้</p>
         </div>
       </section>
@@ -279,7 +279,7 @@ html[lang="th"] .pass__name{font-size:2.3rem}
           <p class="pass__stamp">Approved</p>
         </div>
       </div>
-      <p class="hand pass__note">พิมพ์ลงไปแล้วบัตรจะเขียนตาม กดส่งเมื่อไหร่ถึงจะไปถึงเรา</p>
+      <p class="hand pass__note">พิมพ์ไปบัตรก็เขียนตาม<br>ยังไม่ส่งไปไหนจนกว่าจะกดส่ง</p>
     </aside>
   </div>
 </div>
@@ -291,22 +291,22 @@ var API='https://amufmjwinorlkcycranq.supabase.co/functions/v1/hub/access/';
 var HUB='https://amufmjwinorlkcycranq.supabase.co/functions/v1/hub';
 var KEY='presale_access_secret';
 var $=function(id){return document.getElementById(id)};
-var secret=null, timer=null, polls=0;
+var secret=null, timer=null, polls=0, denied=false;
 
 var MSG={
   invalid:'ส่งไม่สำเร็จ ลองตรวจทุกช่องอีกครั้ง โดยเฉพาะอีเมล',
   rate_limited:'ส่งบ่อยเกินไป ลองใหม่อีกครั้งในอีก 1 ชั่วโมง',
-  too_many_pending:'ตอนนี้มีคำขอรออยู่เยอะเกินไป ลองใหม่ภายหลัง หรือติดต่อผู้ดูแลโดยตรง',
-  already_pending:'อีเมลหรือเบอร์นี้มีคำขอรออยู่แล้ว เปิดลิงก์เดิมที่ได้ตอนส่ง หรือติดต่อผู้ดูแลให้ปฏิเสธคำขอเดิมก่อน',
+  too_many_pending:'ตอนนี้มีคำขอรออยู่เยอะ ลองใหม่ทีหลัง หรือทักผู้ดูแลได้เลย',
+  already_pending:'อีเมลนี้มีคำขอรออยู่แล้ว เปิดลิงก์เดิมจากอีเมลที่เราส่งไป หรือทักผู้ดูแลให้ยกเลิกคำขอเดิมก่อน',
   network:'ติดต่อระบบไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่',
   failed:'ระบบขัดข้องชั่วคราว ลองใหม่อีกครั้ง'
 };
 
 var RULES={
   name:{max:80,req:'กรอกชื่อ-นามสกุลก่อน',min:2,short:'ชื่อสั้นเกินไป กรอกอย่างน้อย 2 ตัวอักษร'},
-  contact:{max:120,req:'กรอกอีเมลก่อน',bad:'รูปแบบอีเมลไม่ถูกต้อง ตรวจว่ามี @ และโดเมนครบ (อย่างน้อย 1 อีเมล ไม่ต้องใส่หลายอัน)'},
+  contact:{max:120,req:'กรอกอีเมลก่อน',bad:'อีเมลยังไม่ถูกต้อง ใส่ให้ครบทั้ง @ และโดเมน และใส่ได้อันเดียว'},
   phone:{max:30,bad:'เบอร์โทรต้องมี 9 ถึง 15 หลัก ใช้ตัวเลข เว้นวรรค หรือเครื่องหมาย + - ( ) ได้'},
-  reason:{max:500,req:'บอกสั้นๆ ว่าจะใช้ทำอะไร',min:10,short:'สั้นไปหน่อย เขียนอย่างน้อย 10 ตัวอักษรให้พอพิจารณาได้'},
+  reason:{max:500,req:'บอกสั้นๆ ว่าจะใช้ทำอะไร',min:10,short:'สั้นไปหน่อย ขออย่างน้อย 10 ตัวอักษร จะได้พิจารณาได้'},
   team:{max:80},wanted:{max:300}
 };
 var ORDER=['name','contact','phone','reason','team','wanted'];
@@ -350,7 +350,8 @@ function show(id){
   ['form','wait','approved','done','end'].forEach(function(s){$(s).hidden=(s!==id)});
   document.body.setAttribute('data-s',id);
   $('pass').setAttribute('data-state',id);
-  $('pappr').textContent=(id==='approved'||id==='done')?'อนุมัติแล้ว':'รออนุมัติ';
+  $('pappr').textContent=(id==='approved'||id==='done')?'อนุมัติแล้ว':(denied?'ยังไม่อนุมัติ':'รออนุมัติ');
+  $('pdays').parentNode.hidden=denied;   // a refused request has no expiry to show
   if(timer&&id!=='wait'){clearTimeout(timer);timer=null}
 }
 function api(route,body){
@@ -373,8 +374,8 @@ function poll(){
     if(!j.ok){ if(r.status===0||r.status>=500){return again()} return end(MSG[j.error]||MSG.failed)}
     if(j.status==='pending'){show('wait');return again()}
     if(j.status==='approved'){$('adays').textContent='ใช้ได้ '+j.days+' วัน';$('pdays').textContent='หมดอายุใน '+j.days+' วัน';show('approved');return}
-    if(j.status==='denied'){return end('คำขอนี้ไม่ได้รับอนุมัติ ถ้าคิดว่าพลาด ติดต่อผู้ดูแลโดยตรง')}
-    if(j.status==='claimed'){return end('รับ token ของคำขอนี้ไปแล้ว หน้านี้ไม่แสดง token ซ้ำ ถ้าทำหายหรือหมดอายุ ให้ขอใหม่')}
+    if(j.status==='denied'){denied=true;return end('คำขอนี้ยังไม่ได้รับอนุมัติ ถ้าคิดว่าเข้าใจผิด ทักผู้ดูแลได้')}
+    if(j.status==='claimed'){return end('รับ token ของคำขอนี้ไปแล้ว หน้านี้ไม่โชว์ซ้ำ ถ้าทำหายหรือหมดอายุให้ขอใหม่')}
     if(j.status==='expired'){return end('คำขอหมดอายุแล้ว ขอใหม่ได้')}
     end(MSG.failed);
   });
@@ -454,7 +455,7 @@ function copy(text,btn){
 }
 $('copytok').addEventListener('click',function(){copy($('tok').textContent,$('copytok'))});
 Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'),function(b){b.addEventListener('click',function(){copy($(b.getAttribute('data-copy')).textContent,b)})});
-$('again').addEventListener('click',function(){forget();polls=0;show('form');$('name').focus()});
+$('again').addEventListener('click',function(){forget();polls=0;denied=false;show('form');$('name').focus()});
 
 var s0=readSecret();
 if(s0){secret=s0;keep(s0);show('wait');poll()}else show('form');
